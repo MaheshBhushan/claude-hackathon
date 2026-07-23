@@ -1,5 +1,5 @@
 /**
- * Offline tests for T4.1–T4.3: the review-gate rule, request validation, CORS,
+ * Offline tests for T4.1-T4.3: the review-gate rule, request validation, CORS,
  * and the full handler path with a mocked Anthropic client (no key/network).
  */
 
@@ -37,7 +37,7 @@ function ungatedProfile(): ImpactProfile {
       score: 3,
       summary: `Summary for ${dimension}.`,
       confidence: "emerging",
-      // NOTE: no flaggedForReview set anywhere — the gate must add it.
+      // NOTE: no flaggedForReview set anywhere - the gate must add it.
     })),
     toc: TOC_ORDER.map((stage) => ({ stage, text: `ToC ${stage}.` })),
     stakeholders: STAKEHOLDER_ORDER.map((area) => ({
@@ -45,7 +45,7 @@ function ungatedProfile(): ImpactProfile {
       score: 2,
       note: `Note ${area}.`,
     })),
-    reviewFlags: [], // empty — the gate must synthesize risk + contribution flags
+    reviewFlags: [], // empty - the gate must synthesize risk + contribution flags
     publicNarrative: "VoltForge stores clean energy at grid scale.",
     themeTags: ["Energy"],
   });
@@ -155,7 +155,7 @@ async function main() {
     console.error(`\n${failures} check(s) failed.`);
     process.exit(1);
   }
-  console.log("\nAPI layer (T4.1–T4.3) works offline.");
+  console.log("\nAPI layer (T4.1-T4.3) works offline.");
 }
 
 main();

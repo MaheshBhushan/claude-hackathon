@@ -2,10 +2,10 @@
   "_meta": {
     "purpose": "Grounding vocabulary for the twin-core tagging prompt (T3). The LLM MUST select tags from these lists and MUST NOT invent new dimension keys, stakeholder areas, IRIS+ themes, or SDG codes outside this file. This is a curated hackathon subset, not the full IRIS+/SDG catalogues.",
     "sources": {
-      "dimensions": "Impact Management Project / Impact Frontiers — five dimensions of impact",
+      "dimensions": "Impact Management Project / Impact Frontiers - five dimensions of impact",
       "irisThemes": "IRIS+ Impact Themes (subset)",
       "sdg": "UN Sustainable Development Goals (goal-level, subset of targets)",
-      "stakeholders": "B Lab B Impact Assessment — five stakeholder impact areas"
+      "stakeholders": "B Lab B Impact Assessment - five stakeholder impact areas"
     }
   },
 
@@ -25,14 +25,14 @@
     {
       "key": "howMuch",
       "label": "How Much",
-      "question": "How much of the outcome occurs — across scale, depth, and duration?",
+      "question": "How much of the outcome occurs - across scale, depth, and duration?",
       "scoringGuidance": "0 = no evidence of degree; 2 = small or short-lived effect; 4 = deep and/or durable effect at meaningful scale."
     },
     {
       "key": "contribution",
       "label": "Contribution",
       "question": "Would this outcome have happened anyway? What does the enterprise add beyond the counterfactual?",
-      "scoringGuidance": "Hard to prove for young ventures — treat as a hypothesis. Always route to human review. Score reflects strength of the contribution argument, not proof.",
+      "scoringGuidance": "Hard to prove for young ventures - treat as a hypothesis. Always route to human review. Score reflects strength of the contribution argument, not proof.",
       "humanReview": true
     },
     {

@@ -1,8 +1,8 @@
-# Halo Execution Plan — Zollhof Impact Digital Twin
+# Halo Execution Plan - Zollhof Impact Digital Twin
 
 **Scope:** Backend + integration only. The frontend is built externally in **Lovable/Vercel** against the mock `ImpactProfile` shape defined in `LOVABLE_PRD.md §7`. This plan covers everything behind that boundary.
 
-**Attribution rule:** never credit Claude as a co-author anywhere — no `Co-Authored-By` trailers, no "Generated with Claude Code" footers in commits, PRs, or docs. Pass this to every subagent that commits.
+**Attribution rule:** never credit Claude as a co-author anywhere - no `Co-Authored-By` trailers, no "Generated with Claude Code" footers in commits, PRs, or docs. Pass this to every subagent that commits.
 
 ---
 
@@ -17,7 +17,7 @@ Frontend and backend meet at exactly **one contract**: `POST /api/tag` → retur
 ## Task tree
 
 ```
-T1  Shared data contract           [root — no deps]   ← authoritative ImpactProfile schema
+T1  Shared data contract           [root - no deps]   ← authoritative ImpactProfile schema
 T2  Taxonomy seed data             [no deps]          ← IRIS+ / SDG / B-Lab / 5-dim grounding
 T3  LLM tagging engine (twin core) [dep: T1, T2]
 │    ├── T3.1  Prompt design (narrative → ToC + 5-dim tags + theme suggestions + vagueness/flags)
@@ -53,7 +53,7 @@ Dependency edges: T3 ← (T1, T2); T4 ← (T1, T3); T5 ← T4; T6 ← T5.
 ## Critical path & parallelism
 - **Critical path:** T1 → T3.1 → T3.2 → T4.1 → T5 → T6.
 - **Parallel:** T2 runs alongside T1; T4.2/T4.3 can be built against a stubbed `tagProfile()` while T3 is finalized.
-- **Freeze T1 early** — the Lovable frontend is coded against the same schema; any change to `ImpactProfile` must be published as a versioned contract, not silently edited.
+- **Freeze T1 early** - the Lovable frontend is coded against the same schema; any change to `ImpactProfile` must be published as a versioned contract, not silently edited.
 
 ## Re-evaluation triggers (Halo §4)
 - **T3.1 invents tags outside `taxonomy.json`** → insufficient-care shape → keep effort high, strengthen grounding/few-shot; if reasoning still wrong → escalate model to `claude-fable-5`.
@@ -62,4 +62,4 @@ Dependency edges: T3 ← (T1, T2); T4 ← (T1, T3); T5 ← T4; T6 ← T5.
 
 ---
 
-*Plan only — no code written. Frontend-build tasks are intentionally excluded (owned by Lovable/Vercel).*
+*Plan only - no code written. Frontend-build tasks are intentionally excluded (owned by Lovable/Vercel).*

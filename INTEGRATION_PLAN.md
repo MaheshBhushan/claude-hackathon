@@ -8,7 +8,7 @@ heuristic engine with real LLM tagging while keeping the existing UI.
 
 | | Frontend (`zollhof-twin-app.html`) | Backend (`/api/tag`) |
 |---|---|---|
-| Engine | `buildProfile()` — client-side JS heuristics, no network | `tagProfile()` → `claude-opus-4-8`, contract-validated |
+| Engine | `buildProfile()` - client-side JS heuristics, no network | `tagProfile()` → `claude-opus-4-8`, contract-validated |
 | Profile shape | rich: `dims[]` (narrative/notes/gated), `toc[]`, `stakeholders[]`, **readiness band**, **verification ledger** | `ImpactProfile` contract: `dimensions[]` (score/summary/confidence/flaggedForReview), `toc[]`, `stakeholders[]`, `reviewFlags[]` |
 | LLM | none (faked) | real |
 
@@ -29,7 +29,7 @@ This is the smallest change that makes the demo real, preserves the polished UI,
 and matches the plan's T5 ("replace the mock `getProfile()` seam, reconcile
 shape mismatches").
 
-## Step 1 — Request mapping (intake → `FounderInput`)
+## Step 1 - Request mapping (intake → `FounderInput`)
 
 The intake collects `problem`, `beneficiaries`, `activity`, `evidence`, `name`,
 `tier`. The backend expects `FounderInput { name, sector, narrative, toc?, maturity }`.
@@ -45,10 +45,10 @@ The intake collects `problem`, `beneficiaries`, `activity`, `evidence`, `name`,
 | `maturity` | `tier` (already `concept`/`pilot`/`scale`) |
 
 > The backend re-parses the narrative into all five ToC stages itself; the
-> `toc` hints just seed it. `sector` is required (min length 1) — supply a
+> `toc` hints just seed it. `sector` is required (min length 1) - supply a
 > default if the intake has no category field.
 
-## Step 2 — Response mapping (`ImpactProfile` → frontend profile)
+## Step 2 - Response mapping (`ImpactProfile` → frontend profile)
 
 `apiToProfile(api, intake)` builds the frontend object:
 
@@ -67,25 +67,25 @@ The intake collects `problem`, `beneficiaries`, `activity`, `evidence`, `name`,
 
 ### The radar
 The frontend radar renders "Evidence by dimension." The backend gives a real
-integer `score` (0–4) per dimension — feed that straight into the radar (an
+integer `score` (0-4) per dimension - feed that straight into the radar (an
 upgrade over the heuristic version).
 
-## Step 3 — Reconcile the frontend-only concepts
+## Step 3 - Reconcile the frontend-only concepts
 
-Two frontend features have **no backend equivalent** — decide per the options:
+Two frontend features have **no backend equivalent** - decide per the options:
 
-1. **Readiness band** (`assessReadiness`) — a "worth backing" lens computed from
+1. **Readiness band** (`assessReadiness`) - a "worth backing" lens computed from
    `dims[].notes`. Options:
    - **(a, recommended)** keep it client-side, computed from the *adapted*
      profile (synthesize the `notes` it reads from `needsSharpening` + tier
      mismatch signals). Zero backend change.
    - (b) extend the backend contract to emit readiness (bigger change, breaks
-     the frozen T1 contract — avoid for the hackathon).
-2. **Verification ledger** (`verifyClaim`/`verifyAll`) — cross-checks stated vs
+     the frozen T1 contract - avoid for the hackathon).
+2. **Verification ledger** (`verifyClaim`/`verifyAll`) - cross-checks stated vs
    recorded numbers. This is a client-side check over the founder's own input;
    keep it entirely client-side, unchanged. It doesn't depend on the engine.
 
-## Step 4 — Plumbing
+## Step 4 - Plumbing
 
 - **API base URL:** add a single `const API_BASE = "..."` (the deployed Vercel
   URL) at the top of the `<script>`, with a `?api=` query-param override for
@@ -97,21 +97,21 @@ Two frontend features have **no backend equivalent** — decide per the options:
   retry. Optionally fall back to the local `buildProfile()` so the demo degrades
   gracefully if the API is down.
 - **CORS / origin:** the backend allow-list must include wherever the HTML is
-  served. Note: opening the file as `file://` sends `Origin: null` — host the
+  served. Note: opening the file as `file://` sends `Origin: null` - host the
   HTML (Vercel static, or the same project) rather than double-clicking it.
   Add the host to `ALLOWED_ORIGINS`.
 
-## Step 5 — Hosting topology
+## Step 5 - Hosting topology
 
 Simplest: serve the HTML as a static file from the **same Vercel project** as
 `api/tag.ts`. Then the frontend can call a same-origin relative path (`/api/tag`)
-— no CORS at all — and `API_BASE` can default to `""`. Put `zollhof-twin-app.html`
+- no CORS at all - and `API_BASE` can default to `""`. Put `zollhof-twin-app.html`
 in the project's `public/` (or as `index.html`) alongside the `api/` function.
 
-## Step 6 — Verify end-to-end
+## Step 6 - Verify end-to-end
 
 - Deploy with `ANTHROPIC_API_KEY` set.
-- Run the intake for the seeded example (Ackerlicht Robotics) and 2–3 contrasting
+- Run the intake for the seeded example (Ackerlicht Robotics) and 2-3 contrasting
   sectors; confirm: profile renders, radar reflects real scores, Risk &
   Contribution show the review gate, theme chips are grounded, maturity badge is
   correct, no composite score anywhere.
@@ -135,7 +135,7 @@ in the project's `public/` (or as `index.html`) alongside the `api/` function.
 
 1. **Same-origin hosting** (serve the HTML from the Vercel backend project) vs
    keep the frontend on Lovable and call cross-origin? Same-origin removes CORS
-   and is simplest — recommended.
+   and is simplest - recommended.
 2. **Readiness band:** keep client-side (recommended) or drop it in integrated
    mode?
 3. **Offline fallback:** on API failure, fall back to the local heuristic

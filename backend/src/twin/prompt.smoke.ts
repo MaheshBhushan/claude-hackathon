@@ -1,6 +1,6 @@
 /**
  * Offline smoke check for T3.1: proves the prompt assembles, embeds the
- * taxonomy, and renders a user message — no API key or network needed.
+ * taxonomy, and renders a user message - no API key or network needed.
  */
 
 import { FounderInput } from "./input.js";

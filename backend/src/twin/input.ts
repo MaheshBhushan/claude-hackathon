@@ -1,5 +1,5 @@
 /**
- * FounderInput (T3) — the raw intake payload the frontend posts to `/api/tag`.
+ * FounderInput (T3) - the raw intake payload the frontend posts to `/api/tag`.
  * Deliberately light: a freeform narrative plus optional structured ToC hints
  * and a self-selected maturity tier. The twin core turns this into a full
  * `ImpactProfile`.

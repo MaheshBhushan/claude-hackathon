@@ -2,7 +2,7 @@
  * Review-gate enforcement (T4.3).
  *
  * The human-review gate is a product guardrail (PRD §9): the Risk and
- * Contribution dimensions must NEVER be presented as auto-scored — they always
+ * Contribution dimensions must NEVER be presented as auto-scored - they always
  * route to a human. The prompt asks the model to do this, but a prompt is a
  * request, not a guarantee. This module enforces it deterministically in code,
  * after the model returns, so the invariant holds even if the model forgets:

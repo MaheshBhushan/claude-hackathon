@@ -1,8 +1,8 @@
-# Zollhof Impact Digital Twin — Backend
+# Zollhof Impact Digital Twin - Backend
 
 Sector-agnostic startup **impact-evaluation** engine for the Zollhof incubator.
 A founder's freeform description of their startup goes in; a structured,
-multi-dimensional **Impact Profile** comes out — never a single composite score.
+multi-dimensional **Impact Profile** comes out - never a single composite score.
 
 The frontend is built separately (Lovable/Vercel). This service is everything
 behind the one contract the frontend consumes: `POST /api/tag → ImpactProfile`.
@@ -21,14 +21,14 @@ POST /api/tag
 ```
 
 The evaluation engine is the **Impact Management Project's five dimensions**
-(What, Who, How Much, Contribution, Risk), fed by two lenses — a mission
+(What, Who, How Much, Contribution, Risk), fed by two lenses - a mission
 Theory-of-Change tagged to IRIS+/SDG themes, and B-Lab stakeholder areas.
 
 ### Guardrails enforced in code (not just requested in the prompt)
 
 - **No composite score.** The contract has no aggregate field, by design.
 - **Risk & Contribution are always flagged for human review**, regardless of
-  what the model returns — enforced server-side in `reviewGate.ts`.
+  what the model returns - enforced server-side in `reviewGate.ts`.
 - **Tags are grounded.** The model may only use dimensions, IRIS+ themes, SDG
   codes, and stakeholder areas from `taxonomy.json`.
 - **Confidence is capped by maturity tier** (concept → hypothesis only, etc.).
@@ -38,7 +38,7 @@ Theory-of-Change tagged to IRIS+/SDG themes, and B-Lab stakeholder areas.
 ```
 backend/
 ├── api/
-│   └── tag.ts                  POST /api/tag — Vercel serverless handler
+│   └── tag.ts                  POST /api/tag - Vercel serverless handler
 ├── src/
 │   ├── contract/               the shared data contract (source of truth)
 │   │   ├── schema.ts             Zod schemas + TS types for ImpactProfile
@@ -46,7 +46,7 @@ backend/
 │   │   ├── emit-json-schema.ts   regenerates the JSON schema
 │   │   ├── taxonomy.json         grounding vocabulary (IMP/IRIS+/SDG/B-Lab)
 │   │   └── contract.test.ts
-│   ├── twin/                   the "twin core" — the intelligence
+│   ├── twin/                   the "twin core" - the intelligence
 │   │   ├── input.ts              FounderInput schema (the request body)
 │   │   ├── prompt.ts             tagging prompt (system + user builder)
 │   │   ├── tagProfile.ts         Anthropic call + validate/repair loop
@@ -60,7 +60,7 @@ backend/
 ```
 
 `schema.ts` is the single contract that the whole backend **and** the Lovable
-frontend agree on. Treat it as frozen — any change must be re-published to both
+frontend agree on. Treat it as frozen - any change must be re-published to both
 sides.
 
 ## Requirements
@@ -87,7 +87,7 @@ export ANTHROPIC_API_KEY=sk-ant-...
 | `npm run test:api` | review gate + validation + full handler path |
 | `npm run gen:schema` | regenerate `impact-profile.schema.json` from `schema.ts` |
 
-All tests run fully offline — the Anthropic client is injected, so no API key
+All tests run fully offline - the Anthropic client is injected, so no API key
 or network is required to validate the pipeline.
 
 ## API

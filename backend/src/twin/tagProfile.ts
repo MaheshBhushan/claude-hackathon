@@ -7,7 +7,7 @@
  * own bad output plus the specific validation errors, then re-validates.
  *
  * Why validate with Zod rather than `output_config.format`: the contract encodes
- * constraints structured outputs don't enforce (integer score range 0–4, and the
+ * constraints structured outputs don't enforce (integer score range 0-4, and the
  * fixed-length-5 arrays for dimensions/toc/stakeholders). Zod is the authority,
  * so we parse-then-validate and repair, rather than trusting a constrained decode.
  */
@@ -112,7 +112,7 @@ export async function tagProfile(
       { role: "user", content: firstText },
       {
         role: "user",
-        content: `Your previous response did not satisfy the contract. Fix exactly these problems and return the corrected JSON object only — no prose, no fences:\n\n${firstCheck.error}`,
+        content: `Your previous response did not satisfy the contract. Fix exactly these problems and return the corrected JSON object only - no prose, no fences:\n\n${firstCheck.error}`,
       },
     ],
   });

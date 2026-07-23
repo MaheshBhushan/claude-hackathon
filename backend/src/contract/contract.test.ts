@@ -1,5 +1,5 @@
 /**
- * Contract sanity checks for T1. Not a full test suite — just proves the schema
+ * Contract sanity checks for T1. Not a full test suite - just proves the schema
  * accepts a well-formed profile and rejects the violations that matter most for
  * the frontend/backend boundary. Run: `npm run test:contract`.
  */

@@ -1,5 +1,5 @@
 /**
- * POST /api/tag — the twin-core HTTP endpoint (T4.1).
+ * POST /api/tag - the twin-core HTTP endpoint (T4.1).
  *
  * Pipeline:  request → validate (T4.2) → tagProfile LLM engine (T3) →
  *            enforce review gate (T4.3) → ImpactProfile JSON.
@@ -22,7 +22,7 @@ function applyHeaders(res: VercelResponse, headers: Record<string, string>) {
 }
 
 /**
- * Client factory — injectable so tests can supply a mock without a real key or
+ * Client factory - injectable so tests can supply a mock without a real key or
  * network. Production builds a real Anthropic client from the env key.
  */
 type ClientFactory = (apiKey: string) => Anthropic;
@@ -85,7 +85,7 @@ export default async function handler(
 
   try {
     const { profile, attempts } = await tagProfile(client, parsed.input);
-    const gated = enforceReviewGate(profile); // T4.3 — non-negotiable server-side
+    const gated = enforceReviewGate(profile); // T4.3 - non-negotiable server-side
     res.setHeader("X-Tagging-Attempts", String(attempts));
     res.status(200).json(gated);
   } catch (err) {

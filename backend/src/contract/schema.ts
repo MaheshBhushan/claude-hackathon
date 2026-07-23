@@ -1,5 +1,5 @@
 /**
- * Zollhof Impact Digital Twin — authoritative data contract (T1).
+ * Zollhof Impact Digital Twin - authoritative data contract (T1).
  *
  * This is the SINGLE SOURCE OF TRUTH for the `ImpactProfile` object that the
  * `POST /api/tag` endpoint returns and that the Lovable/Vercel frontend renders.
@@ -18,7 +18,7 @@
 
 import { z } from "zod";
 
-/** 0–4 integer scale shared by dimension and stakeholder scores. */
+/** 0-4 integer scale shared by dimension and stakeholder scores. */
 export const Score = z.number().int().min(0).max(4);
 
 export const ConfidenceLabel = z.enum(["hypothesis", "emerging", "evidenced"]);
@@ -89,7 +89,7 @@ export const ReviewFlag = z.object({
 });
 
 /**
- * The full Impact Profile — the object returned by `POST /api/tag`.
+ * The full Impact Profile - the object returned by `POST /api/tag`.
  *
  * Fixed-length tuples of 5 for `dimensions`, `toc`, and `stakeholders` are
  * intentional: the five IMP dimensions, the five ToC stages, and the five B Lab
