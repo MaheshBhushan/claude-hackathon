@@ -1,0 +1,139 @@
+{
+  "_meta": {
+    "purpose": "Grounding vocabulary for the twin-core tagging prompt (T3). The LLM MUST select tags from these lists and MUST NOT invent new dimension keys, stakeholder areas, IRIS+ themes, or SDG codes outside this file. This is a curated hackathon subset, not the full IRIS+/SDG catalogues.",
+    "sources": {
+      "dimensions": "Impact Management Project / Impact Frontiers — five dimensions of impact",
+      "irisThemes": "IRIS+ Impact Themes (subset)",
+      "sdg": "UN Sustainable Development Goals (goal-level, subset of targets)",
+      "stakeholders": "B Lab B Impact Assessment — five stakeholder impact areas"
+    }
+  },
+
+  "dimensions": [
+    {
+      "key": "what",
+      "label": "What",
+      "question": "What outcome does the enterprise contribute to, and how important is that outcome to stakeholders?",
+      "scoringGuidance": "0 = no articulated outcome; 2 = plausible outcome, importance unclear; 4 = clearly important outcome tied to a real stakeholder need."
+    },
+    {
+      "key": "who",
+      "label": "Who",
+      "question": "Who experiences the outcome, and how underserved were they beforehand?",
+      "scoringGuidance": "0 = beneficiary undefined; 2 = defined but not underserved; 4 = well-defined, meaningfully underserved population."
+    },
+    {
+      "key": "howMuch",
+      "label": "How Much",
+      "question": "How much of the outcome occurs — across scale, depth, and duration?",
+      "scoringGuidance": "0 = no evidence of degree; 2 = small or short-lived effect; 4 = deep and/or durable effect at meaningful scale."
+    },
+    {
+      "key": "contribution",
+      "label": "Contribution",
+      "question": "Would this outcome have happened anyway? What does the enterprise add beyond the counterfactual?",
+      "scoringGuidance": "Hard to prove for young ventures — treat as a hypothesis. Always route to human review. Score reflects strength of the contribution argument, not proof.",
+      "humanReview": true
+    },
+    {
+      "key": "risk",
+      "label": "Risk",
+      "question": "What is the risk that impact does not occur as expected, or that negative impact occurs?",
+      "scoringGuidance": "Weakest dimension to automate (IRIS+ has no aligned Risk metrics). Always route to human review. Flag negative externalities (surveillance, energy-intensive compute, exclusion) rather than silently scoring them.",
+      "humanReview": true
+    }
+  ],
+
+  "stakeholderAreas": [
+    {
+      "key": "governance",
+      "label": "Governance",
+      "description": "Mission, ethics, accountability, and transparency of how the company is run."
+    },
+    {
+      "key": "workers",
+      "label": "Workers",
+      "description": "Financial security, health, safety, wellbeing, career development, and engagement of the team."
+    },
+    {
+      "key": "community",
+      "label": "Community",
+      "description": "Diversity & inclusion, economic impact, civic engagement, and supply-chain effects on the wider community."
+    },
+    {
+      "key": "environment",
+      "label": "Environment",
+      "description": "Resource use, emissions, and environmental management across operations and product."
+    },
+    {
+      "key": "customers",
+      "label": "Customers",
+      "description": "Whether the product/service creates real value for customers and does no harm."
+    }
+  ],
+
+  "irisThemes": [
+    "Agriculture",
+    "Air",
+    "Biodiversity & Ecosystems",
+    "Climate",
+    "Diversity & Inclusion",
+    "Education",
+    "Employment",
+    "Energy",
+    "Financial Services",
+    "Health",
+    "Housing",
+    "Infrastructure",
+    "Land",
+    "Oceans & Coastal Zones",
+    "Pollution",
+    "Real Estate",
+    "Waste",
+    "Water"
+  ],
+
+  "sdg": [
+    { "code": "1", "label": "No Poverty" },
+    { "code": "2", "label": "Zero Hunger" },
+    { "code": "3", "label": "Good Health and Well-being" },
+    { "code": "4", "label": "Quality Education" },
+    { "code": "5", "label": "Gender Equality" },
+    { "code": "6", "label": "Clean Water and Sanitation" },
+    { "code": "7", "label": "Affordable and Clean Energy" },
+    { "code": "8", "label": "Decent Work and Economic Growth" },
+    { "code": "9", "label": "Industry, Innovation and Infrastructure" },
+    { "code": "10", "label": "Reduced Inequalities" },
+    { "code": "11", "label": "Sustainable Cities and Communities" },
+    { "code": "12", "label": "Responsible Consumption and Production" },
+    { "code": "13", "label": "Climate Action" },
+    { "code": "14", "label": "Life Below Water" },
+    { "code": "15", "label": "Life on Land" },
+    { "code": "16", "label": "Peace, Justice and Strong Institutions" },
+    { "code": "17", "label": "Partnerships for the Goals" }
+  ],
+
+  "maturityTiers": [
+    {
+      "key": "concept",
+      "label": "Concept",
+      "evidenceExpectation": "No operating history. Founder Theory-of-Change interview only. Output is qualitative with assumptions flagged. Default confidence: hypothesis."
+    },
+    {
+      "key": "pilot",
+      "label": "Pilot",
+      "evidenceExpectation": "Real early users. Lean Data-style lightweight customer feedback available. Confidence can reach emerging."
+    },
+    {
+      "key": "scale",
+      "label": "Scale",
+      "evidenceExpectation": "Operating history with quantitative, IRIS+-aligned reporting. Confidence can reach evidenced."
+    }
+  ],
+
+  "confidenceLabels": [
+    { "key": "hypothesis", "meaning": "Claimed but not yet validated by any real-world data." },
+    { "key": "emerging", "meaning": "Early signals or lightweight feedback support the claim." },
+    { "key": "evidenced", "meaning": "Backed by operating data or measured outcomes." }
+  ]
+}

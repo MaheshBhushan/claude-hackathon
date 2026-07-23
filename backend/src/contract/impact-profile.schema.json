@@ -1,0 +1,222 @@
+{
+  "$ref": "#/definitions/ImpactProfile",
+  "definitions": {
+    "ImpactProfile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sector": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mission": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maturity": {
+          "type": "string",
+          "enum": [
+            "concept",
+            "pilot",
+            "scale"
+          ]
+        },
+        "lastEvaluated": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dimensions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dimension": {
+                "type": "string",
+                "enum": [
+                  "what",
+                  "who",
+                  "howMuch",
+                  "contribution",
+                  "risk"
+                ]
+              },
+              "score": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4
+              },
+              "summary": {
+                "type": "string",
+                "minLength": 1
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "hypothesis",
+                  "emerging",
+                  "evidenced"
+                ]
+              },
+              "flaggedForReview": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "dimension",
+              "score",
+              "summary",
+              "confidence"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "toc": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "input",
+                  "activity",
+                  "output",
+                  "outcome",
+                  "impact"
+                ]
+              },
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "irisThemes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "sdgTargets": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "needsSharpening": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "stage",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "stakeholders": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "area": {
+                "type": "string",
+                "enum": [
+                  "governance",
+                  "workers",
+                  "community",
+                  "environment",
+                  "customers"
+                ]
+              },
+              "score": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4
+              },
+              "note": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "area",
+              "score",
+              "note"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 5,
+          "maxItems": 5
+        },
+        "reviewFlags": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "risk",
+                  "contribution"
+                ]
+              },
+              "claim": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "pending",
+                  "cleared"
+                ]
+              }
+            },
+            "required": [
+              "kind",
+              "claim",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "publicNarrative": {
+          "type": "string",
+          "minLength": 1
+        },
+        "themeTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "sector",
+        "mission",
+        "maturity",
+        "lastEvaluated",
+        "dimensions",
+        "toc",
+        "stakeholders",
+        "reviewFlags",
+        "publicNarrative",
+        "themeTags"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}
