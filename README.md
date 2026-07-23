@@ -1,11 +1,15 @@
-# Zollhof Impact Digital Twin - Backend
+# Zollhof Impact Digital Twin
 
 Sector-agnostic startup **impact-evaluation** engine for the Zollhof incubator.
 A founder's freeform description of their startup goes in; a structured,
 multi-dimensional **Impact Profile** comes out - never a single composite score.
 
-The frontend is built separately (Lovable/Vercel). This service is everything
-behind the one contract the frontend consumes: `POST /api/tag → ImpactProfile`.
+**Live:** https://zollhof-twin.vercel.app
+
+The web UI (`backend/public/index.html`) and the API are served same-origin from
+one Vercel project. The UI calls the one contract everything is built around:
+`POST /api/tag → ImpactProfile`. If the API is unavailable it falls back to an
+on-device heuristic engine so the demo never breaks.
 
 ## What it does
 
@@ -127,6 +131,13 @@ Error responses share a typed shape:
 
 ## Deployment
 
-Deploys to Vercel as a serverless function. Set `ANTHROPIC_API_KEY` (and
-optionally `ALLOWED_ORIGINS`, a comma-separated CORS allow-list) in the project
-environment. `vercel.json` gives the function a 60-second timeout.
+Deploys to Vercel as a serverless function, with the web UI served from
+`backend/public/`. Set `ANTHROPIC_API_KEY` (and optionally `ALLOWED_ORIGINS`, a
+comma-separated CORS allow-list) in the project environment. `vercel.json` gives
+the function a 60-second timeout.
+
+## Contributors
+
+- Harismitha Gogikar (@missharismitha)
+- Althaf (@Althaf607)
+- Md Nayeem (@thelostbong)
