@@ -1,13 +1,13 @@
 <meta charset="utf-8">
 <style>
 /* ============================================================================
-   ZOLLHOF IMPACT TWIN — application shell
+   ZOLLHOF IMPACT TWIN - application shell
    Brand per LOVABLE_PRD §8: Swiss/brutalist, hard black rules, flat colour.
-   Display face is Arial Black — a genuine heavy grotesque that ships on both
+   Display face is Arial Black - a genuine heavy grotesque that ships on both
    Windows and macOS. Archivo Black leads the stack so it picks up if ever
    self-hosted; no font CDN is linked (blocked under artifact CSP, and a silent
    fallback on venue wifi is worse than a deliberate one).
-   Single light theme, deliberately — the brand has no dark mode.
+   Single light theme, deliberately - the brand has no dark mode.
    ========================================================================== */
 
 :root{
@@ -202,6 +202,10 @@ button.pill:disabled:hover{background:var(--white);color:var(--black);}
   display:flex;flex-direction:column;gap:11px;min-height:212px;width:100%;
 }
 .card:hover{background:var(--lime);}
+.pcards{display:grid;gap:16px;grid-template-columns:repeat(3,1fr);align-items:start;}
+.pcards .card{border:var(--rule);min-height:0;}
+@media (max-width:1050px){ .pcards{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:720px){ .pcards{grid-template-columns:1fr;} }
 .card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;}
 .card h3{font-size:19px;}
 .card .sector{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:5px;}
@@ -415,7 +419,7 @@ textarea{min-height:88px;resize:vertical;line-height:1.45;}
 
 /* ==========================================================================
    TAXONOMY
-   Comparability lives here, at the theme layer — never at the raw-KPI layer.
+   Comparability lives here, at the theme layer - never at the raw-KPI layer.
    ========================================================================== */
 
 const DIMENSIONS = [
@@ -423,7 +427,7 @@ const DIMENSIONS = [
   {id:"who",    label:"Who",         q:"Who experiences it, and how underserved were they beforehand?"},
   {id:"howMuch",label:"How much",    q:"How many, how much change, and for how long?"},
   {id:"contribution",label:"Contribution",q:"Would this have happened anyway without the venture?",gated:true},
-  {id:"risk",   label:"Risk",        q:"What could make the impact differ from expectation — including harm?",gated:true}
+  {id:"risk",   label:"Risk",        q:"What could make the impact differ from expectation - including harm?",gated:true}
 ];
 
 const AREAS = [
@@ -467,7 +471,7 @@ const RISK_TRIGGERS = [
 
 const TIERS = {
   concept:{id:"concept",label:"Concept",ceiling:"hypothesis",bar:"Founder Theory-of-Change interview only. A qualitative profile with flagged assumptions."},
-  pilot:  {id:"pilot",  label:"Pilot",  ceiling:"emerging",  bar:"Lean Data–style lightweight customer feedback, once real users exist."},
+  pilot:  {id:"pilot",  label:"Pilot",  ceiling:"emerging",  bar:"Lean Data-style lightweight customer feedback, once real users exist."},
   scale:  {id:"scale",  label:"Scale",  ceiling:"evidenced", bar:"Quantitative IRIS+-aligned reporting against an operating history."}
 };
 
@@ -481,7 +485,7 @@ function capConfidence(want,tierId){
   return CONF_ORDER[Math.min(w < 0 ? 0 : w, c)];
 }
 
-/* Keywords match at a word START only — never mid-word. This keeps deliberate
+/* Keywords match at a word START only - never mid-word. This keeps deliberate
    prefixes working ("agri" → "agriculture", "communit" → "communities") while
    preventing false positives that plain substring search produces: "load"
    inside "caseload", "sme" inside "gasmeter", "care" inside "scarecrow".
@@ -507,7 +511,7 @@ function matchTax(text,list,limit){
 }
 
 /* ==========================================================================
-   VERIFIER — deterministic. No model. Two independent checks per claim:
+   VERIFIER - deterministic. No model. Two independent checks per claim:
      MATCH      does the stated value equal the recorded value?
      PROVENANCE was that recorded value confirmed by a human, against a source?
    A claim matching an unsourced field is NOT verified. That distinction is
@@ -518,10 +522,10 @@ const V = {OK:"verified",UNSOURCED:"matched_unsourced",NONE:"no_evidence",MISS:"
 const V_SHORT = {verified:"match",matched_unsourced:"match · unsourced",no_evidence:"no evidence",mismatch:"no source match",unknown_field:"no such field"};
 const V_LONG  = {
   verified:"Verified against a source a human read",
-  matched_unsourced:"Matches the record — but the record itself is unsourced",
+  matched_unsourced:"Matches the record - but the record itself is unsourced",
   no_evidence:"No evidence yet",
-  mismatch:"UNVERIFIED — value contradicts the source record",
-  unknown_field:"UNVERIFIED — no such field exists in the source data"
+  mismatch:"UNVERIFIED - value contradicts the source record",
+  unknown_field:"UNVERIFIED - no such field exists in the source data"
 };
 const V_PILL = {verified:"blue",matched_unsourced:"lime",no_evidence:"inert",mismatch:"coral",unknown_field:"coral"};
 
@@ -570,12 +574,12 @@ function corrections(rs){
   return rs.filter(function(r){ return r.verdict === V.MISS || r.verdict === V.UNKNOWN; }).map(function(r){
     if(r.verdict === V.UNKNOWN) return 'Drop the claim about "' + r.field + '". The source data has no such field.';
     if(r.recordedValue) return 'Replace "' + r.statedValue + '" with the source value "' + r.recordedValue + '" (field: ' + r.field + ').';
-    return 'Drop "' + r.statedValue + '". The record holds no value for ' + r.field + ' — say "no evidence yet".';
+    return 'Drop "' + r.statedValue + '". The record holds no value for ' + r.field + ' - say "no evidence yet".';
   });
 }
 
 /* ==========================================================================
-   TWIN CORE — computes the profile from the founder's own words.
+   TWIN CORE - computes the profile from the founder's own words.
    Never returns a composite number.
    ========================================================================== */
 
@@ -609,7 +613,7 @@ function theoryOfChange(k){
     const isOutcome = n.stage === "Outcome" || n.stage === "Impact";
     return Object.assign({},n,{
       /* Theme chips attach to the Outcome and Impact nodes, where the claim
-         actually lives — not to the profile as a whole. */
+         actually lives - not to the profile as a whole. */
       sdg:  isOutcome && n.text ? matchTax(n.text,SDGS,2) : [],
       iris: isOutcome && n.text ? matchTax(n.text,IRIS,1) : [],
       needsSharpening: !n.text || (isOutcome && vague) || (n.stage === "Output" && !/\d/.test(n.text || ""))
@@ -628,7 +632,7 @@ function fiveDimensions(k){
   const o = {};
 
   o.what = {
-    narrative:k.problem ? "Stated outcome: " + k.problem.trim() : "No outcome stated — the twin cannot describe what changes.",
+    narrative:k.problem ? "Stated outcome: " + k.problem.trim() : "No outcome stated - the twin cannot describe what changes.",
     confidence:capConfidence(k.problem ? "hypothesis" : "none",tier),
     notes: vague.length ? ['Too vague to evaluate: uses "' + vague.join('", "') + '". Ask what specifically changes, for whom.'] : []
   };
@@ -644,7 +648,7 @@ function fiveDimensions(k){
     confidence:capConfidence(hasN ? "emerging" : "none",tier),
     notes:[
       (!hasN && tier !== "concept") ? "Declared " + TIERS[tier].label + " but offered no quantitative evidence. Either the tier or the evidence is wrong." : null,
-      !hasD ? "Duration not stated — is the change one-off or recurring?" : null
+      !hasD ? "Duration not stated - is the change one-off or recurring?" : null
     ].filter(Boolean)
   };
   o.contribution = {
@@ -654,7 +658,7 @@ function fiveDimensions(k){
   };
   o.risk = {
     narrative:risks.length
-      ? risks.length + " risk pattern(s) detected in the founder's own wording. Routed to a human — not scored."
+      ? risks.length + " risk pattern(s) detected in the founder's own wording. Routed to a human - not scored."
       : "No pattern from the trigger list appeared. Absence of a trigger is not evidence of absence of risk.",
     confidence:"none",gated:true,flags:risks,
     notes:["IRIS+ has no metrics aligned to the Risk dimension. This tool does not auto-score it, by design."]
@@ -703,7 +707,7 @@ function buildProfile(k){
 }
 
 /* ==========================================================================
-   BACKEND INTEGRATION — the real twin core (claude-opus-4-8 via /api/tag).
+   BACKEND INTEGRATION - the real twin core (claude-opus-4-8 via /api/tag).
    Same-origin by default; override with ?api=<base-url> for local testing.
    On any failure the caller falls back to the local heuristic buildProfile().
    ========================================================================== */
@@ -803,7 +807,7 @@ function apiToProfile(api, intake){
 }
 
 /* ==========================================================================
-   READINESS — the "worth backing" lens.
+   READINESS - the "worth backing" lens.
    Readiness may be graded. Impact may not. They are computed separately and
    NEVER averaged. Collapse them and this becomes the opaque index ESG
    scoring is rightly criticised for.
@@ -836,7 +840,7 @@ function assessReadiness(p,record){
     why:"Self-reported founder data is gameable. Anything the team has not sourced stays unsourced on the card.",
     level:fs.length === 0 ? "absent" : LV[Math.round((sourced/fs.length)*3)],
     detail:fs.length ? sourced + " of " + fs.length + " fields confirmed against a real source."
-      : "No portfolio record attached — intake narrative only."});
+      : "No portfolio record attached - intake narrative only."});
 
   const addr = p.stakeholders.filter(function(s){ return s.addressed; }).length;
   crit.push({label:"Stakeholder footprint considered",
@@ -854,8 +858,8 @@ function assessReadiness(p,record){
   let sc = 0; crit.forEach(function(c){ sc += LV.indexOf(c.level); });
   const ratio = sc/(crit.length*3);
   let band;
-  if(p.gated) band = {id:"gated",label:"Gated — human review required",
-    detail:'A risk flag is open. This does not mean "reject" — it means a mentor or the investment committee decides, not this tool.'};
+  if(p.gated) band = {id:"gated",label:"Gated - human review required",
+    detail:'A risk flag is open. This does not mean "reject" - it means a mentor or the investment committee decides, not this tool.'};
   else if(ratio < .34) band = {id:"not_ready",label:"Not ready to assess",
     detail:"Too little is established to say anything defensible. Run the founder interview again before deciding."};
   else if(ratio < .67) band = {id:"explorable",label:"Explorable",
@@ -867,10 +871,10 @@ function assessReadiness(p,record){
 }
 
 /* ==========================================================================
-   FIXTURES — fictional Bavarian ventures.
+   FIXTURES - fictional Bavarian ventures.
    Each field carries its own provenance:
      sourced   a human read the cited source and confirmed the value
-     unsourced nobody has confirmed it yet — the verifier says so out loud
+     unsourced nobody has confirmed it yet - the verifier says so out loud
      null      we hold nothing. Honest, not a gap to be filled with a guess.
    `draft` is what the drafting model wrote. The verifier compares the two.
    ========================================================================== */
@@ -880,7 +884,7 @@ function nul(){ return {value:null,provenance:"unsourced",source:null}; }
 
 const STARTUPS = [
   {
-    id:"ackerlicht", name:"Ackerlicht Robotics", sector:"AgTech — Physical AI",
+    id:"ackerlicht", name:"Ackerlicht Robotics", sector:"AgTech - Physical AI",
     category:"AgTech", tier:"pilot", lastEvaluated:"14 Jul 2026",
     mission:"Laser-based weeding robot for smallholder vegetable farms, cutting herbicide dependence in Franconian test fields.",
     problem:"Smallholder vegetable farms depend on herbicide because mechanical weeding is not economic below 50 hectares, degrading soil life season after season.",
@@ -979,12 +983,12 @@ const STARTUPS = [
   {
     id:"lasttier", name:"LastTier Logistics", sector:"Mobility & Logistics",
     category:"Mobility & Logistics", tier:"concept", lastEvaluated:"02 Jul 2026",
-    mission:"Driverless flatbed transport for long, awkward goods within factory intralogistics — spun out of a prior incubation pivot.",
+    mission:"Driverless flatbed transport for long, awkward goods within factory intralogistics - spun out of a prior incubation pivot.",
     problem:"Moving long-format goods across a factory floor still needs manual forklift trips, which is where most floor injuries happen.",
     beneficiaries:"Factory floor staff currently making manual forklift trips.",
     activity:"Planned: autonomous driverless transport of long-format goods across factory floors, operating unsupervised alongside staff.",
     evidence:"",
-    publicNarrative:"LastTier is developing driverless transport for long, awkward goods inside factories — currently at concept stage, with no field deployment yet.",
+    publicNarrative:"LastTier is developing driverless transport for long, awkward goods inside factories - currently at concept stage, with no field deployment yet.",
     record:{
       stage:f("Pre-Seed","sourced","Founder interview"),
       team:f("4 FTE","sourced","Founder interview"),
@@ -1111,7 +1115,7 @@ function pendingCount(s){
 }
 
 /* ==========================================================================
-   RADAR — evidence strength per dimension. Gated axes render hollow and are
+   RADAR - evidence strength per dimension. Gated axes render hollow and are
    excluded from the fill, because they are not scored.
    ========================================================================== */
 
@@ -1149,7 +1153,7 @@ function radar(p){
     + '<polygon points="' + poly + '" fill="#B9A8F5" fill-opacity="0.55" stroke="#1A16F0" stroke-width="3"/>'
     + dots + labels + '</svg>'
     + '<div class="legend"><span><i style="background:#1A16F0"></i>evidence established</span>'
-    + '<span><i style="background:#fff"></i>gated — human review</span></div>'
+    + '<span><i style="background:#fff"></i>gated - human review</span></div>'
     + '<p class="radar-note">Axis is evidence strength, not impact magnitude. Nothing here is summed.</p>';
 }
 
@@ -1207,7 +1211,7 @@ function viewPortfolio(){
     '<div class="view-head-row"><div>'
     + '<div class="sub">Zollhof incubation team · internal</div>'
     + '<h1>Impact digital twin</h1>'
-    + '<p class="desc">Every venture carries a tiered impact profile — never a single score, never a leaderboard. '
+    + '<p class="desc">Every venture carries a tiered impact profile - never a single score, never a leaderboard. '
     + 'Open a twin for the five-dimensions engine, the verification ledger and the review gate.</p>'
     + '</div><div class="head-actions">'
     + '<button class="pill blue" data-nav="intake">New intake →</button>'
@@ -1231,7 +1235,7 @@ function viewPortfolio(){
       }).join("") + '</div>'
 
     + (list.length
-        ? '<div class="cells c3">' + list.map(function(s){
+        ? '<div class="pcards">' + list.map(function(s){
             const p = profileOf(s), v = verifyOf(s), n = pendingCount(s);
             const pub = state.render === "public";
             return '<button class="card" data-nav="twin" data-id="' + esc(s.id) + '">'
@@ -1317,7 +1321,7 @@ function viewTwin(id){
     body = '<div class="toc-chain">' + p.toc.map(function(n){
         return '<div class="toc-node' + (n.text ? "" : " empty") + '">'
           + '<div class="stage">' + esc(n.stage) + '</div>'
-          + '<div class="txt">' + esc(n.text || "not stated — legitimate at this tier") + '</div>'
+          + '<div class="txt">' + esc(n.text || "not stated - legitimate at this tier") + '</div>'
           + '<div class="chips" style="margin-top:9px">'
             + n.sdg.map(function(t){ return '<span class="chip sdg">SDG ' + esc(t.target) + '</span>'; }).join("")
             + n.iris.map(function(t){ return '<span class="chip iris">IRIS+ ' + esc(t.label) + '</span>'; }).join("")
@@ -1327,7 +1331,7 @@ function viewTwin(id){
       }).join("") + '</div>'
       + '<div class="panel" style="margin-top:16px"><div class="panel-head"><h3>Why chips sit on Outcome and Impact only</h3></div>'
       + '<div class="panel-body"><p class="note">Theme tags attach to the nodes where an outcome claim actually lives, not to the venture as a whole. '
-      + 'That keeps comparison at the taxonomy layer — a health venture and a climate venture are comparable by which SDG target they touch, '
+      + 'That keeps comparison at the taxonomy layer - a health venture and a climate venture are comparable by which SDG target they touch, '
       + 'never by their raw KPIs. <b>Needs sharpening</b> marks a node too vague or too unquantified to evaluate.</p></div></div>';
   }
 
@@ -1359,7 +1363,7 @@ function viewTwin(id){
           return '<tr' + (V_PILL[r.verdict] === "coral" ? ' class="bad"' : "") + '>'
             + '<td><span class="val">' + esc(r.statedValue) + '</span>'
             + (r.source ? '<div class="src">' + esc(r.source) + '</div>' : '<div class="src">no source on file</div>') + '</td>'
-            + '<td><span class="val">' + esc(r.recordedValue === null ? "—" : r.recordedValue) + '</span></td>'
+            + '<td><span class="val">' + esc(r.recordedValue === null ? "-" : r.recordedValue) + '</span></td>'
             + '<td>' + pill(V_SHORT[r.verdict],V_PILL[r.verdict]) + '</td></tr>';
         }).join("") + '</tbody></table></div>'
       + (v.corrections.length
@@ -1373,7 +1377,7 @@ function viewTwin(id){
         + '<button class="pill blue" data-nav="verifier">Open verifier lab →</button>'
       + '</div>'
       + (state.seeded[s.id] ? '<p class="note" style="margin-top:10px"><b>Say this out loud:</b> the flagged rows were deliberately seeded '
-          + 'so the catch is visible. It demonstrates the check — it is not a real finding.</p>' : "")
+          + 'so the catch is visible. It demonstrates the check - it is not a real finding.</p>' : "")
       + '</div></div>';
   }
 
@@ -1391,7 +1395,7 @@ function viewTwin(id){
       + '<b>never averaged into one figure</b>.</p>'
       + '<p style="font-size:12.5px;margin-top:10px">A venture can be highly ready and impact-thin, or deeply impactful and '
       + 'not ready. The moment those collapse into a single number, this becomes the opaque index that ESG scoring is '
-      + 'rightly criticised for — and it fits a no-equity coaching programme badly.</p>'
+      + 'rightly criticised for - and it fits a no-equity coaching programme badly.</p>'
       + '<p style="font-size:12.5px;margin-top:10px">This is admissions and coaching triage. It is not investment advice.</p>'
       + '</div></div>';
   }
@@ -1434,7 +1438,7 @@ function viewPublic(s,p){
       + '<p style="font-size:12.5px">No radar. No confidence labels. No stakeholder bars. No verification ledger. '
       + 'No readiness band. And above all, no number that ranks this venture against any other.</p>'
       + '<p style="font-size:12.5px;margin-top:11px">Removing the comparative figure removes most of the incentive to '
-      + 'perform impact rather than create it — and protects Zollhof from pressure to favour a good story over real but '
+      + 'perform impact rather than create it - and protects Zollhof from pressure to favour a good story over real but '
       + 'unglamorous B2B or deep-tech value.</p>'
       + '<p style="font-size:12.5px;margin-top:11px">The full profile stays internal, where it does its actual job: coaching.</p>'
     + '</div></div>';
@@ -1473,7 +1477,7 @@ function simulate(cat){
     + " in its own description. That is a coaching prompt, not a verdict.");
   if(total && sourced/total < .8) gaps.push("Only " + sourced + " of " + total
     + " record fields in this cohort are source-confirmed. Nothing should go external until that changes.");
-  if(covered.length <= 1) gaps.push("This cohort maps onto a single theme — either the domain is genuinely narrow, or the narratives are too thin to tag.");
+  if(covered.length <= 1) gaps.push("This cohort maps onto a single theme - either the domain is genuinely narrow, or the narratives are too thin to tag.");
   const gated = rows.filter(function(r){ return r.p.gated; }).length;
   if(gated) gaps.push(gated + " venture(s) here carry an open risk flag awaiting a human decision.");
 
@@ -1484,7 +1488,7 @@ function viewSimulate(){
   const cat = state.simCat, sim = simulate(cat);
   $("viewHead").innerHTML =
     '<div class="view-head-row"><div><div class="sub">Cohort view</div><h1>Sector simulation</h1>'
-    + '<p class="desc">Pick a domain and see the whole cohort at once — which themes it covers, which stakeholder areas '
+    + '<p class="desc">Pick a domain and see the whole cohort at once - which themes it covers, which stakeholder areas '
     + 'nobody has addressed, how well-evidenced the records are, and what a new entrant would need to bring. '
     + 'Note what is absent, not who is ahead: there is no ranked list here, and there should never be.</p></div></div>';
 
@@ -1535,7 +1539,7 @@ function viewSimulate(){
               }).join("") + '</div></div>'
             + '<div class="panel" style="border:0;border-top:var(--rule)"><div class="panel-head"><h3>What a new entrant would need</h3></div>'
             + '<div class="panel-body"><p style="font-size:12.5px"><b>White space:</b> '
-              + esc(sim.white.join(", ") || "none — this cohort spans the reference themes") + '</p>'
+              + esc(sim.white.join(", ") || "none - this cohort spans the reference themes") + '</p>'
               + '<p class="note" style="margin-top:9px">' + (sim.tiers.scale
                   ? "This cohort already contains a Scale-tier venture, so quantitative IRIS+-aligned reporting is a realistic expectation here."
                   : "This cohort is pre-Scale. A new entrant should not be held to reporting it has no operating history for.") + '</p></div></div>'
@@ -1551,7 +1555,7 @@ function viewVerifier(){
   $("viewHead").innerHTML =
     '<div class="view-head-row"><div><div class="sub">Stage 3 of the pipeline</div>'
     + '<h1>Verifier lab</h1>'
-    + '<p class="desc">Claude drafts the report and cites specific facts. A separate deterministic matcher — no model involved — '
+    + '<p class="desc">Claude drafts the report and cites specific facts. A separate deterministic matcher - no model involved - '
     + 'compares each cited value against the source record. Two checks run independently: does the value match, and was that '
     + 'record field ever confirmed by a human against a real source? A claim matching an unsourced field is '
     + '<b>not</b> verified, and the ledger says so.</p></div>'
@@ -1564,7 +1568,7 @@ function viewVerifier(){
 
   $("viewBody").innerHTML =
     '<div class="lab"><div class="lab-col src">'
-      + '<div class="eyebrow">Drafted claims — ' + esc(s.name) + '</div>'
+      + '<div class="eyebrow">Drafted claims - ' + esc(s.name) + '</div>'
       + claimsFor(s).map(function(c){
           return '<div class="claim-line' + (c.seeded ? " seeded" : "") + '"><span class="t">"' + esc(c.statedValue) + '"</span>'
             + (c.seeded ? pill("seeded","coral") : "") + '</div>';
@@ -1619,14 +1623,14 @@ function paintLab(s,instant){
     n.className = "note";
     n.style.marginTop = "12px";
     n.textContent = held
-      ? held + " of " + v.counts.total + " claims held back — " + v.counts.flagged
+      ? held + " of " + v.counts.total + " claims held back - " + v.counts.flagged
         + " with no source match, " + v.counts.unsourced + " matching a field nobody has confirmed."
       : "All claims matched a source-confirmed field.";
     box.appendChild(n);
     if(v.corrections.length){
       const c = document.createElement("div");
       c.className = "correction";
-      c.innerHTML = "<h4>Deterministic correction — sent back to Claude</h4><ul>"
+      c.innerHTML = "<h4>Deterministic correction - sent back to Claude</h4><ul>"
         + v.corrections.map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
       box.appendChild(c);
     }
@@ -1635,7 +1639,7 @@ function paintLab(s,instant){
       d.className = "note";
       d.style.marginTop = "10px";
       d.innerHTML = "<b>Say this out loud:</b> the flagged claims were deliberately seeded so the catch is visible. "
-        + "It demonstrates the check — it is not a real finding.";
+        + "It demonstrates the check - it is not a real finding.";
       box.appendChild(d);
     }
   }, reduce ? 5 : v.results.length*340 + 120);
@@ -1656,7 +1660,7 @@ function viewIntake(){
   const d = state.intakeData, st = state.intakeStep;
   $("viewHead").innerHTML =
     '<div class="view-head-row"><div><div class="sub">Founder-facing</div><h1>Build an impact twin</h1>'
-    + '<p class="desc">Four fields and an honestly self-declared stage. The twin core parses what you write — '
+    + '<p class="desc">Four fields and an honestly self-declared stage. The twin core parses what you write - '
     + 'this is not a lookup into a canned profile. Theme tags, confidence labels, the risk gate and the readiness band '
     + 'are all derived from your own words.</p></div>'
     + '<div class="head-actions"><button class="pill" id="fillEx">Fill an example</button></div></div>';
@@ -1672,7 +1676,7 @@ function viewIntake(){
   } else if(st === 2){
     form = '<label class="fl">What you actually do<span class="h">The activity in the middle of your theory of change.</span></label>'
       + '<textarea id="f_activity" placeholder="A laser weeding robot makes on-field passes that…">' + esc(d.activity||"") + '</textarea>'
-      + '<label class="fl">Evidence so far<span class="h">Blank is a legitimate answer at concept stage — it will be recorded as "no evidence yet", not held against you.</span></label>'
+      + '<label class="fl">Evidence so far<span class="h">Blank is a legitimate answer at concept stage - it will be recorded as "no evidence yet", not held against you.</span></label>'
       + '<textarea id="f_evidence" placeholder="40 pilot hectares across 2 partner farms…">' + esc(d.evidence||"") + '</textarea>'
       + '<label class="fl">Venture name</label>'
       + '<input type="text" id="f_name" placeholder="Ackerlicht Robotics" value="' + esc(d.name||"") + '">';
@@ -1743,7 +1747,7 @@ function paintIntakeResult(){
     + '<div class="panel"><div class="panel-head"><h3>Theory of change</h3></div><div class="panel-body">'
       + '<div class="toc-chain">' + p.toc.map(function(n){
           return '<div class="toc-node' + (n.text ? "" : " empty") + '"><div class="stage">' + esc(n.stage) + '</div>'
-            + '<div class="txt">' + esc(n.text || "not stated — legitimate at this tier") + '</div>'
+            + '<div class="txt">' + esc(n.text || "not stated - legitimate at this tier") + '</div>'
             + '<div class="chips" style="margin-top:8px">' + n.sdg.map(function(t){
                 return '<span class="chip sdg">SDG ' + esc(t.target) + '</span>'; }).join("") + '</div>'
             + (n.needsSharpening ? '<div class="sharp">⚠ Needs sharpening</div>' : "") + '</div>';
@@ -1882,7 +1886,7 @@ document.addEventListener("click",function(e){
   const clear = t.closest("[data-clear]");
   if(clear){
     state.reviewStatus[clear.getAttribute("data-clear")] = "cleared";
-    toast("Marked reviewed","A human signed off. This is a gate, not a score — the profile itself did not change.");
+    toast("Marked reviewed","A human signed off. This is a gate, not a score - the profile itself did not change.");
     render();
     return;
   }
@@ -1904,7 +1908,7 @@ document.addEventListener("click",function(e){
   if(t.closest("#fillEx")){
     state.intakeData = Object.assign({},EXAMPLE);
     state.intakeStep = 1;
-    toast("Example loaded","Walk the three steps — the profile at the end is computed from this text.");
+    toast("Example loaded","Walk the three steps - the profile at the end is computed from this text.");
     render();
     return;
   }
@@ -1918,7 +1922,7 @@ document.addEventListener("click",function(e){
       state.intakeProfile = apiToProfile(api, state.intakeData);
       render();
       toast("Twin built", state.intakeProfile.gated
-        ? "A risk pattern was flagged for a mentor by the twin core — not scored."
+        ? "A risk pattern was flagged for a mentor by the twin core - not scored."
         : "Profile computed by the twin core (claude-opus-4-8). No composite score was produced.");
     }).catch(function(err){
       state.intakeProfile = buildProfile(state.intakeData);
@@ -1957,7 +1961,7 @@ document.addEventListener("click",function(e){
     toast(state.render === "public" ? "Public render" : "Internal render",
       state.render === "public"
         ? "Narrative, theme tags and a maturity badge only. No number that ranks one venture against another."
-        : "Full profile restored — dimensions, ledger, readiness and the review gate.");
+        : "Full profile restored - dimensions, ledger, readiness and the review gate.");
   }
 });
 
