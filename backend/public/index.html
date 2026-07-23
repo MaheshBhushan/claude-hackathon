@@ -1,0 +1,1997 @@
+<meta charset="utf-8">
+<style>
+/* ============================================================================
+   ZOLLHOF IMPACT TWIN — application shell
+   Brand per LOVABLE_PRD §8: Swiss/brutalist, hard black rules, flat colour.
+   Display face is Arial Black — a genuine heavy grotesque that ships on both
+   Windows and macOS. Archivo Black leads the stack so it picks up if ever
+   self-hosted; no font CDN is linked (blocked under artifact CSP, and a silent
+   fallback on venue wifi is worse than a deliberate one).
+   Single light theme, deliberately — the brand has no dark mode.
+   ========================================================================== */
+
+:root{
+  --black:#000;
+  --white:#fff;
+  --blue:#1A16F0;
+  --lime:#CDEE00;
+  --coral:#FD4A3E;
+  --pink:#F4C9DA;
+  --lav:#B9A8F5;
+  --inert:#f2f2f2;
+  --inert-2:#e6e6e6;
+  --muted:#5a5a5a;
+  --rule:3px solid #000;
+  --rule-2:2px solid #000;
+  --display:"Archivo Black","Arial Black","Segoe UI Black",Haettenschweiler,Helvetica,sans-serif;
+  --body:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,"Cascadia Mono","SF Mono",Menlo,Consolas,monospace;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:var(--body);font-size:14.5px;line-height:1.5;
+  color:var(--black);background:var(--white);
+  overflow:hidden;                      /* the shell owns scrolling, not the page */
+}
+@media (max-width:900px){ body{overflow:auto;} }
+
+h1,h2,h3,h4,.disp{
+  font-family:var(--display);font-weight:900;text-transform:uppercase;
+  letter-spacing:-.015em;line-height:1.03;margin:0;
+}
+p{margin:0;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;color:inherit;}
+::selection{background:var(--lime);}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){ *{animation-duration:.01ms !important;transition-duration:.01ms !important;} }
+
+/* ---------------- shell ---------------- */
+.shell{display:grid;grid-template-rows:auto auto 1fr;height:100%;}
+.topbar{
+  display:flex;align-items:stretch;justify-content:space-between;
+  background:var(--black);color:var(--white);border-bottom:var(--rule);height:56px;flex:none;
+}
+.brandbtn{
+  display:flex;align-items:center;gap:9px;padding:0 20px;background:none;border:0;cursor:pointer;
+  font-family:var(--display);font-size:17px;letter-spacing:.01em;color:var(--white);
+}
+.brandbtn .dot{width:11px;height:11px;background:var(--lime);display:block;}
+.brandbtn .sub{color:var(--lime);}
+.topbar-right{display:flex;align-items:stretch;}
+.kbd-hint{
+  display:flex;align-items:center;gap:7px;padding:0 16px;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:#9a9a9a;border-left:2px solid #333;
+  background:none;border-top:0;border-right:0;border-bottom:0;cursor:pointer;
+}
+.kbd-hint:hover{background:#1a1a1a;color:var(--white);}
+.kbd{
+  font-family:var(--mono);font-size:10px;border:1px solid #555;padding:2px 5px;color:#ccc;
+}
+.segmented{display:flex;align-items:stretch;border-left:2px solid #333;}
+.segmented button{
+  padding:0 15px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  background:none;border:0;border-left:1px solid #333;color:#9a9a9a;cursor:pointer;
+}
+.segmented button:first-child{border-left:0;}
+.segmented button[aria-pressed="true"]{background:var(--blue);color:var(--white);}
+
+.notice{
+  background:var(--pink);border-bottom:var(--rule);padding:6px 20px;flex:none;
+  font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;text-align:center;
+}
+
+.body-grid{display:grid;grid-template-columns:232px 1fr;min-height:0;}
+@media (max-width:900px){ .body-grid{grid-template-columns:1fr;} }
+
+/* ---------------- left rail ---------------- */
+.rail{
+  border-right:var(--rule);display:flex;flex-direction:column;min-height:0;overflow-y:auto;background:var(--white);
+}
+@media (max-width:900px){
+  .rail{border-right:0;border-bottom:var(--rule);flex-direction:row;overflow-x:auto;}
+}
+.rail-group{border-bottom:var(--rule-2);padding:12px 0;}
+@media (max-width:900px){ .rail-group{border-bottom:0;border-right:var(--rule-2);display:flex;padding:0;} }
+.rail-label{
+  font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);
+  padding:0 16px 8px;
+}
+@media (max-width:900px){ .rail-label{display:none;} }
+.rail-item{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;
+  padding:10px 16px;background:none;border:0;border-left:4px solid transparent;cursor:pointer;
+  font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap;
+}
+.rail-item:hover{background:var(--inert);}
+.rail-item[aria-current="true"]{background:var(--blue);color:var(--white);border-left-color:var(--black);}
+.rail-item .n{font-family:var(--mono);font-size:10px;opacity:.65;}
+.rail-item .badge-n{
+  margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:700;
+  background:var(--coral);color:var(--black);border:1.5px solid var(--black);padding:0 5px;
+}
+.rail-item[aria-current="true"] .badge-n{border-color:var(--white);}
+.rail-foot{margin-top:auto;padding:14px 16px;font-size:10px;color:var(--muted);line-height:1.45;}
+@media (max-width:900px){ .rail-foot{display:none;} }
+
+/* ---------------- main region ---------------- */
+.main{display:grid;grid-template-rows:auto 1fr;min-height:0;min-width:0;}
+.view-head{border-bottom:var(--rule);padding:18px 24px;background:var(--white);flex:none;}
+.view-head-row{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap;}
+.view-head h1{font-size:30px;}
+@media (max-width:640px){ .view-head h1{font-size:22px;} }
+.view-head .sub{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:6px;}
+.view-head .desc{font-size:13.5px;max-width:74ch;margin-top:10px;color:#222;}
+.head-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;}
+
+.tabs{display:flex;overflow-x:auto;border-top:var(--rule-2);margin:16px -24px -18px;padding:0 24px;background:var(--white);}
+.tab{
+  padding:11px 15px;background:none;border:0;border-bottom:4px solid transparent;cursor:pointer;
+  font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;color:var(--muted);
+}
+.tab:hover{color:var(--black);}
+.tab[aria-selected="true"]{color:var(--black);border-bottom-color:var(--blue);}
+.tab .cnt{font-family:var(--mono);font-size:10px;margin-left:5px;background:var(--inert);padding:1px 5px;}
+.tab[aria-selected="true"] .cnt{background:var(--lime);}
+.tab .cnt.alert{background:var(--coral);}
+
+.view-body{overflow-y:auto;min-height:0;padding:24px;background:var(--inert);}
+@media (max-width:900px){ .view-body{overflow:visible;} }
+
+/* ---------------- cell system ---------------- */
+.cells{display:grid;gap:3px;background:var(--black);border:var(--rule);}
+.cells.c2{grid-template-columns:1fr 1fr;}
+.cells.c3{grid-template-columns:repeat(3,1fr);}
+.cells.c4{grid-template-columns:repeat(4,1fr);}
+.cells.side{grid-template-columns:1.35fr 1fr;}
+@media (max-width:1050px){ .cells.c3,.cells.c4,.cells.side{grid-template-columns:1fr 1fr;} }
+@media (max-width:720px){ .cells.c2,.cells.c3,.cells.c4,.cells.side{grid-template-columns:1fr;} }
+.cell{background:var(--white);padding:18px;min-width:0;}
+.cell.pink{background:var(--pink);}
+.cell.lav{background:var(--lav);}
+.cell.blue{background:var(--blue);color:var(--white);}
+.cell.black{background:var(--black);color:var(--white);}
+.cell.lime{background:var(--lime);}
+.panel{border:var(--rule);background:var(--white);}
+.panel + .panel{margin-top:16px;}
+.panel-head{
+  border-bottom:var(--rule-2);padding:11px 16px;display:flex;justify-content:space-between;
+  align-items:baseline;gap:12px;flex-wrap:wrap;
+}
+.panel-head h3{font-size:13px;}
+.panel-head .meta{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+.panel-body{padding:16px;}
+
+.eyebrow{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin-bottom:9px;}
+.cell.blue .eyebrow,.cell.black .eyebrow{color:#c9c9ff;}
+.stat{font-family:var(--display);font-size:32px;line-height:1;}
+.stat-sub{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-top:6px;}
+.cell.blue .stat-sub,.cell.black .stat-sub{color:#c9c9ff;}
+
+/* ---------------- pills / chips ---------------- */
+.pill{
+  display:inline-flex;align-items:center;gap:6px;border:2px solid var(--black);border-radius:999px;
+  padding:4px 13px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;
+  background:var(--white);color:var(--black);white-space:nowrap;
+}
+.pill.blue{background:var(--blue);color:var(--white);border-color:var(--black);}
+.pill.lime{background:var(--lime);}
+.pill.coral{background:var(--coral);}
+.pill.lav{background:var(--lav);}
+.pill.inert{background:var(--inert);color:var(--muted);}
+.pill.sm{padding:2px 9px;font-size:10px;}
+button.pill{cursor:pointer;}
+button.pill:hover{background:var(--black);color:var(--white);}
+button.pill.blue:hover{background:var(--black);}
+button.pill:disabled{opacity:.4;cursor:not-allowed;}
+button.pill:disabled:hover{background:var(--white);color:var(--black);}
+
+.chip{
+  display:inline-block;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;
+  border:2px solid var(--black);border-radius:999px;padding:2px 9px;margin:0 4px 4px 0;background:var(--white);
+}
+.chip.sdg{background:var(--lav);}
+.chip.iris{background:var(--white);}
+.chips{display:flex;flex-wrap:wrap;gap:0;}
+
+/* ---------------- portfolio cards ---------------- */
+.card{
+  background:var(--white);padding:18px;cursor:pointer;text-align:left;border:0;
+  display:flex;flex-direction:column;gap:11px;min-height:212px;width:100%;
+}
+.card:hover{background:var(--lime);}
+.card-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;}
+.card h3{font-size:19px;}
+.card .sector{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-top:5px;}
+.card .mission{font-size:12.5px;flex:1;}
+.card-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;
+  border-top:var(--rule-2);padding-top:10px;font-size:10.5px;font-weight:800;text-transform:uppercase;}
+
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+.filterbar .lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+
+/* ---------------- dimensions ---------------- */
+.dim-row{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:var(--rule-2);}
+.dim-row:last-child{border-bottom:0;}
+.dim-row.hot{background:var(--lime);margin:0 -16px;padding-left:16px;padding-right:16px;}
+.dim-row .dl{font-family:var(--display);font-size:13px;width:104px;flex:none;padding-top:2px;}
+.dim-row .dm{flex:1;min-width:0;}
+.dim-row .dq{font-size:11px;color:var(--muted);font-style:italic;margin-bottom:4px;}
+.dim-row .dtext{font-size:12.5px;}
+.dim-row .dnotes{margin:7px 0 0;padding-left:16px;font-size:11.5px;color:var(--muted);}
+.dim-row .dnotes li{margin-bottom:3px;}
+.dim-row .dr{flex:none;}
+.flag-callout{
+  margin-top:8px;display:inline-flex;align-items:center;gap:6px;background:var(--coral);
+  border:var(--rule-2);padding:4px 10px;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;
+}
+
+/* ---------------- theory of change ---------------- */
+.toc-chain{display:flex;gap:3px;background:var(--black);border:var(--rule);overflow-x:auto;}
+.toc-node{background:var(--white);padding:14px;min-width:190px;flex:1;}
+.toc-node.empty{background:var(--inert);}
+.toc-node .stage{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
+.toc-node .txt{font-size:12.5px;font-weight:600;margin-top:6px;}
+.toc-node.empty .txt{font-weight:400;font-style:italic;color:var(--muted);}
+.toc-node .sharp{margin-top:8px;font-size:10px;font-weight:800;text-transform:uppercase;
+  background:var(--coral);border:2px solid var(--black);padding:2px 7px;display:inline-block;}
+
+/* ---------------- stakeholders ---------------- */
+.stake-row{display:flex;align-items:center;gap:13px;padding:11px 0;border-bottom:var(--rule-2);}
+.stake-row:last-child{border-bottom:0;}
+.stake-row .sl{width:108px;flex:none;font-size:11.5px;font-weight:800;text-transform:uppercase;}
+.stake-track{flex:1;min-width:70px;height:16px;background:var(--inert);border:var(--rule-2);}
+.stake-fill{height:100%;background:var(--blue);}
+.stake-fill.zero{background:repeating-linear-gradient(45deg,var(--inert-2),var(--inert-2) 4px,var(--white) 4px,var(--white) 8px);}
+.stake-row .sn{width:270px;flex:none;font-size:11.5px;color:#333;}
+@media (max-width:820px){ .stake-row{flex-wrap:wrap;} .stake-row .sn{width:100%;} }
+
+/* ---------------- tables ---------------- */
+.tbl-wrap{overflow-x:auto;}
+table.tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+table.tbl th{
+  text-align:left;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);border-bottom:var(--rule-2);padding:7px 10px 7px 0;
+}
+table.tbl td{padding:10px 10px 10px 0;border-bottom:2px solid var(--inert-2);vertical-align:top;}
+table.tbl tr:last-child td{border-bottom:0;}
+table.tbl td:last-child,table.tbl th:last-child{padding-right:0;text-align:right;}
+table.tbl tr.bad td{background:#ffe9e7;}
+table.tbl .src{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:4px;}
+table.tbl .val{font-family:var(--mono);font-size:11.5px;}
+
+/* ---------------- review queue ---------------- */
+.review-item{display:flex;gap:13px;align-items:center;padding:13px 0;border-bottom:var(--rule-2);flex-wrap:wrap;}
+.review-item:last-child{border-bottom:0;}
+.review-item .claim{flex:1;min-width:210px;font-size:12.5px;font-weight:600;}
+.review-item .why{font-size:11px;color:var(--muted);font-weight:400;margin-top:3px;}
+
+/* ---------------- readiness ---------------- */
+.band{border:var(--rule);padding:14px 16px;margin-bottom:14px;}
+.band h4{font-size:15px;}
+.band p{font-size:12px;margin-top:4px;}
+.band.gated{background:var(--coral);}
+.band.strong{background:var(--lime);}
+.band.explorable{background:var(--lav);}
+.band.not_ready{background:var(--inert);}
+.crit{display:flex;gap:13px;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:var(--rule-2);}
+.crit:last-child{border-bottom:0;}
+.crit .cl{font-size:12.5px;font-weight:800;}
+.crit .cw{font-size:11px;color:var(--muted);font-style:italic;margin-top:2px;}
+.crit .cd{font-size:11.5px;margin-top:3px;}
+
+/* ---------------- verifier lab ---------------- */
+.lab{display:grid;gap:3px;background:var(--black);border:var(--rule);grid-template-columns:1fr 1fr;}
+@media (max-width:820px){ .lab{grid-template-columns:1fr;} }
+.lab-col{background:var(--white);padding:18px;min-width:0;}
+.lab-col.src{background:var(--pink);}
+.claim-line{
+  display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+  padding:9px 0;border-bottom:var(--rule-2);font-size:12px;
+}
+.claim-line:last-of-type{border-bottom:0;}
+.claim-line .t{min-width:0;overflow-wrap:anywhere;font-family:var(--mono);font-size:11.5px;}
+.claim-line.seeded .t{font-weight:700;}
+.result-line{
+  display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+  padding:9px 0;border-bottom:var(--rule-2);font-size:12px;
+  opacity:0;transform:translateX(7px);transition:opacity .28s ease,transform .28s ease;
+}
+.result-line.show{opacity:1;transform:none;}
+.result-line .t{min-width:0;overflow-wrap:anywhere;font-family:var(--mono);font-size:11.5px;}
+.correction{border:var(--rule);background:var(--coral);padding:12px 14px;margin-top:14px;}
+.correction h4{font-size:11px;margin-bottom:7px;}
+.correction ul{margin:0;padding-left:16px;font-size:11.5px;}
+.correction li{margin-bottom:5px;}
+
+/* ---------------- intake wizard ---------------- */
+.wizard{max-width:720px;}
+.steps{display:flex;gap:3px;background:var(--black);border:var(--rule);margin-bottom:18px;}
+.step{flex:1;background:var(--white);padding:9px 11px;font-size:10px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:center;}
+.step.done{background:var(--blue);color:var(--white);}
+.step.now{background:var(--lime);color:var(--black);}
+label.fl{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+label.fl .h{display:block;font-weight:400;text-transform:none;letter-spacing:0;font-size:11.5px;
+  font-style:italic;color:var(--muted);margin-top:3px;}
+input[type=text],textarea,select{
+  width:100%;border:var(--rule-2);padding:10px 12px;font-family:var(--body);font-size:13.5px;
+  background:var(--white);color:var(--black);margin-bottom:16px;
+}
+textarea{min-height:88px;resize:vertical;line-height:1.45;}
+.tier-opts{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px;}
+.tier-opt{border:var(--rule-2);padding:11px 16px;background:var(--white);cursor:pointer;text-align:left;
+  font-size:12px;font-weight:800;text-transform:uppercase;}
+.tier-opt .h{display:block;font-weight:400;text-transform:none;font-size:11px;color:var(--muted);margin-top:4px;max-width:26ch;}
+.tier-opt[aria-pressed="true"]{background:var(--blue);color:var(--white);}
+.tier-opt[aria-pressed="true"] .h{color:#d5d4ff;}
+.wiz-actions{display:flex;justify-content:space-between;gap:10px;margin-top:8px;}
+.loading{text-align:center;padding:60px 20px;}
+.spin{width:34px;height:34px;border:5px solid var(--inert-2);border-top-color:var(--blue);
+  margin:0 auto 16px;animation:sp .75s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+
+/* ---------------- command palette ---------------- */
+.cmdk{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;
+  align-items:flex-start;justify-content:center;padding:80px 18px;
+}
+.cmdk.open{display:flex;}
+.cmdk-box{background:var(--white);border:var(--rule);width:100%;max-width:560px;}
+.cmdk-box input{margin:0;border:0;border-bottom:var(--rule);font-size:16px;padding:15px 17px;}
+.cmdk-list{max-height:340px;overflow-y:auto;}
+.cmdk-item{
+  display:flex;gap:11px;align-items:center;width:100%;text-align:left;padding:11px 17px;
+  background:none;border:0;border-bottom:2px solid var(--inert-2);cursor:pointer;font-size:13px;
+}
+.cmdk-item:last-child{border-bottom:0;}
+.cmdk-item[aria-selected="true"]{background:var(--blue);color:var(--white);}
+.cmdk-item .k{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);border:2px solid currentColor;padding:1px 6px;flex:none;}
+.cmdk-item[aria-selected="true"] .k{color:#fff;}
+.cmdk-empty{padding:22px 17px;font-size:12.5px;color:var(--muted);}
+
+/* ---------------- toasts ---------------- */
+.toasts{position:fixed;right:18px;bottom:18px;z-index:250;display:flex;flex-direction:column;gap:9px;max-width:330px;}
+.toast{
+  background:var(--black);color:var(--white);border:var(--rule);border-color:var(--lime);
+  padding:11px 14px;font-size:12px;animation:tin .22s ease;
+}
+.toast b{color:var(--lime);display:block;font-family:var(--display);font-size:11px;
+  text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+@keyframes tin{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* ---------------- misc ---------------- */
+.empty{border:3px dashed var(--inert-2);padding:44px 22px;text-align:center;color:var(--muted);font-size:13px;background:var(--white);}
+.note{font-size:11.5px;color:var(--muted);}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 15px;font-size:12.5px;}
+.kv dt{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);}
+.kv dd{margin:0;font-variant-numeric:tabular-nums;}
+.meter{height:14px;background:var(--inert);border:var(--rule-2);margin-top:11px;}
+.meter>span{display:block;height:100%;background:var(--blue);}
+.gaps{margin:0;padding-left:17px;font-size:12px;}
+.gaps li{margin-bottom:7px;}
+.radar-note{font-size:10.5px;color:var(--muted);text-align:center;margin-top:8px;}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin-top:9px;}
+.legend i{width:10px;height:10px;display:inline-block;margin-right:5px;vertical-align:-1px;border:2px solid var(--black);}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+</style>
+
+<div class="shell">
+  <div class="topbar">
+    <button class="brandbtn" id="brandBtn"><span class="dot"></span>ZOLLHOF <span class="sub">// TWIN</span></button>
+    <div class="topbar-right">
+      <button class="kbd-hint" id="cmdkBtn">Search <span class="kbd">Ctrl K</span></button>
+      <div class="segmented" role="group" aria-label="Render">
+        <button id="vInternal" aria-pressed="true">Internal</button>
+        <button id="vPublic" aria-pressed="false">Public</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="notice">Frontend prototype · fictional fixtures, not real companies · no composite impact score is shown anywhere</div>
+
+  <div class="body-grid">
+    <nav class="rail" id="rail" aria-label="Sections"></nav>
+    <div class="main">
+      <div class="view-head" id="viewHead"></div>
+      <div class="view-body" id="viewBody"></div>
+    </div>
+  </div>
+</div>
+
+<div class="cmdk" id="cmdk" role="dialog" aria-modal="true" aria-label="Command palette">
+  <div class="cmdk-box">
+    <input type="text" id="cmdkInput" placeholder="Jump to a startup or a view…" autocomplete="off">
+    <div class="cmdk-list" id="cmdkList"></div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/* ==========================================================================
+   TAXONOMY
+   Comparability lives here, at the theme layer — never at the raw-KPI layer.
+   ========================================================================== */
+
+const DIMENSIONS = [
+  {id:"what",   label:"What",        q:"What outcome occurs, and how important is it to those experiencing it?"},
+  {id:"who",    label:"Who",         q:"Who experiences it, and how underserved were they beforehand?"},
+  {id:"howMuch",label:"How much",    q:"How many, how much change, and for how long?"},
+  {id:"contribution",label:"Contribution",q:"Would this have happened anyway without the venture?",gated:true},
+  {id:"risk",   label:"Risk",        q:"What could make the impact differ from expectation — including harm?",gated:true}
+];
+
+const AREAS = [
+  {id:"governance", label:"Governance", hint:"mission lock, ethics, transparency", probes:["mission","governance","board","transparen","open source","ethic","audit","advisor"]},
+  {id:"workers",    label:"Workers",    hint:"pay, ownership, safety, development", probes:["worker","employee","staff","team","labour","labor","shift","safety","injur","training","crew"]},
+  {id:"community",  label:"Community",  hint:"local economy, supply chain, inclusion", probes:["local","region","communit","supply chain","bavaria","franconia","rural","municipal","smallholder","sme","mittelstand","independent"]},
+  {id:"environment",label:"Environment",hint:"energy, materials, emissions", probes:["energy","carbon","emission","waste","water","material","soil","herbicide","chemical","scrap","recycl","grid"]},
+  {id:"customers",  label:"Customers",  hint:"who is served, and how well", probes:["customer","user","farm","patient","client","manufacturer","operator","clinic","utility"]}
+];
+
+/* SDG entries carry target-level codes, not just goal numbers. */
+const SDGS = [
+  {id:"SDG2", label:"SDG 2 · Zero Hunger",       target:"2.3", kw:["agri","farm","crop","soil","yield","food","harvest","weed","herbicide"]},
+  {id:"SDG3", label:"SDG 3 · Good Health",       target:"3.4", kw:["health","patient","clinic","diagnos","medical","respirat","readmission","care"]},
+  {id:"SDG7", label:"SDG 7 · Clean Energy",      target:"7.2", kw:["energy","grid","solar","battery","renewable","mwh","load"]},
+  {id:"SDG8", label:"SDG 8 · Decent Work",       target:"8.2", kw:["job","worker","labour","labor","productivity","wage","employ","staff time"]},
+  {id:"SDG9", label:"SDG 9 · Industry",          target:"9.4", kw:["manufactur","industr","robot","factory","automat","machine","logistic","forklift","erp","intralogistic"]},
+  {id:"SDG12",label:"SDG 12 · Responsible Consumption",target:"12.5",kw:["waste","circular","recycl","material","reuse","scrap","defect"]},
+  {id:"SDG13",label:"SDG 13 · Climate Action",   target:"13.1", kw:["climate","carbon","co2","emission","decarbon","tco2e"]},
+  {id:"SDG15",label:"SDG 15 · Life on Land",     target:"15.3", kw:["soil","biodiversity","land","herbicide","chemical input","ecosystem"]}
+];
+
+const IRIS = [
+  {id:"AG",     label:"Agriculture",         kw:["agri","farm","crop","soil","yield","harvest","weed"]},
+  {id:"CLIMATE",label:"Climate",             kw:["climate","carbon","emission","decarbon","co2","tco2e"]},
+  {id:"ENERGY", label:"Clean Energy",        kw:["energy","grid","solar","battery","renewable","mwh"]},
+  {id:"HEALTH", label:"Health",              kw:["health","patient","clinic","diagnos","medical","respirat"]},
+  {id:"EMPLOY", label:"Employment",          kw:["job","worker","employ","labour","labor","productivity"]},
+  {id:"WASTE",  label:"Resource Efficiency", kw:["waste","circular","recycl","reuse","scrap","defect"]},
+  {id:"INFRA",  label:"Infrastructure",      kw:["manufactur","industr","robot","factory","logistic","erp"]}
+];
+
+const RISK_TRIGGERS = [
+  {id:"safety",      label:"Safety-critical autonomy",     kw:["autonomous","driverless","unsupervised","without human","safety-critical","self-driving"]},
+  {id:"clinical",    label:"Clinical decision dependency", kw:["readmission","clinician","diagnosis","patient monitoring","medical decision","post-discharge"]},
+  {id:"sensitive",   label:"Sensitive personal data",      kw:["patient data","health record","personal data","gdpr","monitoring patients"]},
+  {id:"displacement",label:"Labour displacement",          kw:["replace workers","replaces workers","headcount","eliminate roles","reduce staff","automate away","no layoffs","displacement"]},
+  {id:"compute",     label:"Energy-intensive compute",     kw:["large language model","foundation model","gpu cluster","inference at scale","data centre","data center"]},
+  {id:"surveillance",label:"Workplace surveillance",       kw:["surveillance","facial recognition","biometric","monitor employees","behavioural scoring"]}
+];
+
+const TIERS = {
+  concept:{id:"concept",label:"Concept",ceiling:"hypothesis",bar:"Founder Theory-of-Change interview only. A qualitative profile with flagged assumptions."},
+  pilot:  {id:"pilot",  label:"Pilot",  ceiling:"emerging",  bar:"Lean Data–style lightweight customer feedback, once real users exist."},
+  scale:  {id:"scale",  label:"Scale",  ceiling:"evidenced", bar:"Quantitative IRIS+-aligned reporting against an operating history."}
+};
+
+const CONF_ORDER = ["none","hypothesis","emerging","evidenced"];
+const CONF_LABEL = {none:"No evidence yet",hypothesis:"Hypothesis",emerging:"Emerging",evidenced:"Evidenced"};
+const CONF_PILL  = {none:"inert",hypothesis:"",emerging:"lime",evidenced:"blue"};
+
+function capConfidence(want,tierId){
+  const ceil = TIERS[tierId] ? TIERS[tierId].ceiling : "hypothesis";
+  const w = CONF_ORDER.indexOf(want), c = CONF_ORDER.indexOf(ceil);
+  return CONF_ORDER[Math.min(w < 0 ? 0 : w, c)];
+}
+
+/* Keywords match at a word START only — never mid-word. This keeps deliberate
+   prefixes working ("agri" → "agriculture", "communit" → "communities") while
+   preventing false positives that plain substring search produces: "load"
+   inside "caseload", "sme" inside "gasmeter", "care" inside "scarecrow".
+   A stray keyword hit puts a wrong SDG target on a venture's profile, which is
+   exactly the kind of unearned claim this whole tool exists to prevent. */
+const _kwCache = {};
+function kwHit(hay,kw){
+  let re = _kwCache[kw];
+  if(!re){
+    re = new RegExp("\\b" + kw.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));
+    _kwCache[kw] = re;
+  }
+  return re.test(hay);
+}
+function matchTax(text,list,limit){
+  const hay = String(text||"").toLowerCase();
+  return list.map(function(e){
+      return {e:e,hits:e.kw.filter(function(k){ return kwHit(hay,k); }).length};
+    })
+    .filter(function(r){ return r.hits > 0; })
+    .sort(function(a,b){ return b.hits - a.hits; })
+    .slice(0,limit||3).map(function(r){ return r.e; });
+}
+
+/* ==========================================================================
+   VERIFIER — deterministic. No model. Two independent checks per claim:
+     MATCH      does the stated value equal the recorded value?
+     PROVENANCE was that recorded value confirmed by a human, against a source?
+   A claim matching an unsourced field is NOT verified. That distinction is
+   the entire point of this module.
+   ========================================================================== */
+
+const V = {OK:"verified",UNSOURCED:"matched_unsourced",NONE:"no_evidence",MISS:"mismatch",UNKNOWN:"unknown_field"};
+const V_SHORT = {verified:"match",matched_unsourced:"match · unsourced",no_evidence:"no evidence",mismatch:"no source match",unknown_field:"no such field"};
+const V_LONG  = {
+  verified:"Verified against a source a human read",
+  matched_unsourced:"Matches the record — but the record itself is unsourced",
+  no_evidence:"No evidence yet",
+  mismatch:"UNVERIFIED — value contradicts the source record",
+  unknown_field:"UNVERIFIED — no such field exists in the source data"
+};
+const V_PILL = {verified:"blue",matched_unsourced:"lime",no_evidence:"inert",mismatch:"coral",unknown_field:"coral"};
+
+function norm(v){
+  if(v === null || v === undefined) return "";
+  return String(v).toLowerCase().replace(/[‐-―]/g,"-").replace(/[^a-z0-9\-. ]/g," ").replace(/\s+/g," ").trim();
+}
+function nums(v){
+  const m = String(v === null || v === undefined ? "" : v).match(/\d+(?:[.,]\d+)?/g) || [];
+  const s = new Set(); m.forEach(function(n){ s.add(n.replace(",",".")); }); return s;
+}
+function agree(stated,recorded){
+  const a = norm(stated), b = norm(recorded);
+  if(!a || !b) return false;
+  if(a === b) return true;
+  if(a.indexOf(b) !== -1 || b.indexOf(a) !== -1){
+    const an = nums(stated), bn = nums(recorded);
+    if(an.size === 0) return true;
+    let ok = true; an.forEach(function(n){ if(!bn.has(n)) ok = false; });
+    return ok;
+  }
+  return false;
+}
+function verifyClaim(c,record){
+  const e = record[c.field];
+  const base = {field:c.field,statedValue:c.statedValue,seeded:!!c.seeded,
+    recordedValue:e ? e.value : null, source:e ? e.source : null};
+  if(!e) return Object.assign(base,{verdict:V.UNKNOWN});
+  if(e.value === null || e.value === "") return Object.assign(base,{verdict:c.statedValue ? V.MISS : V.NONE});
+  if(!agree(c.statedValue,e.value)) return Object.assign(base,{verdict:V.MISS});
+  if(e.provenance === "sourced") return Object.assign(base,{verdict:V.OK});
+  return Object.assign(base,{verdict:V.UNSOURCED});
+}
+function verifyAll(claims,record){ return claims.map(function(c){ return verifyClaim(c,record); }); }
+function tally(rs){
+  const c = {verified:0,unsourced:0,flagged:0,none:0,total:rs.length};
+  rs.forEach(function(r){
+    if(r.verdict === V.OK) c.verified++;
+    else if(r.verdict === V.UNSOURCED) c.unsourced++;
+    else if(r.verdict === V.NONE) c.none++;
+    else c.flagged++;
+  });
+  return c;
+}
+function corrections(rs){
+  return rs.filter(function(r){ return r.verdict === V.MISS || r.verdict === V.UNKNOWN; }).map(function(r){
+    if(r.verdict === V.UNKNOWN) return 'Drop the claim about "' + r.field + '". The source data has no such field.';
+    if(r.recordedValue) return 'Replace "' + r.statedValue + '" with the source value "' + r.recordedValue + '" (field: ' + r.field + ').';
+    return 'Drop "' + r.statedValue + '". The record holds no value for ' + r.field + ' — say "no evidence yet".';
+  });
+}
+
+/* ==========================================================================
+   TWIN CORE — computes the profile from the founder's own words.
+   Never returns a composite number.
+   ========================================================================== */
+
+const VAGUE = ["revolutionis","revolutioniz","disrupt","game-chang","world-class","best-in-class",
+  "seamless","synergy","cutting-edge","next generation","transform the industry","unlimited","state of the art"];
+const UNDER = ["smallholder","rural","low-income","underserved","small business","sme","smes",
+  "mittelstand","family-run","waitlist","elderly","informal","remote","disadvantaged","independent","mid-size"];
+const DURATION = ["per year","annually","ongoing","permanent","long-term","each season","recurring","rolling","per month","12-month"];
+
+function hitsIn(t,w){ const s = String(t||"").toLowerCase(); return w.filter(function(x){ return kwHit(s,x); }); }
+function firstClause(s){ if(!s) return null; const m = String(s).split(/[.;]/)[0]; return m ? m.trim() : null; }
+
+function detectRisks(text){
+  const t = String(text||"").toLowerCase();
+  return RISK_TRIGGERS.map(function(r){
+    return {id:r.id,label:r.label,matched:r.kw.filter(function(k){ return kwHit(t,k); })};
+  }).filter(function(r){ return r.matched.length > 0; });
+}
+
+function theoryOfChange(k){
+  const all = [k.problem,k.beneficiaries,k.activity,k.evidence].filter(Boolean).join(" ");
+  const vague = hitsIn(all,VAGUE).length > 0;
+  const raw = [
+    {stage:"Input",    text:firstClause(k.activity)},
+    {stage:"Activity", text:k.activity || null},
+    {stage:"Output",   text:firstClause(k.evidence)},
+    {stage:"Outcome",  text:k.problem || null},
+    {stage:"Impact",   text:k.beneficiaries || null}
+  ];
+  return raw.map(function(n){
+    const isOutcome = n.stage === "Outcome" || n.stage === "Impact";
+    return Object.assign({},n,{
+      /* Theme chips attach to the Outcome and Impact nodes, where the claim
+         actually lives — not to the profile as a whole. */
+      sdg:  isOutcome && n.text ? matchTax(n.text,SDGS,2) : [],
+      iris: isOutcome && n.text ? matchTax(n.text,IRIS,1) : [],
+      needsSharpening: !n.text || (isOutcome && vague) || (n.stage === "Output" && !/\d/.test(n.text || ""))
+    });
+  });
+}
+
+function fiveDimensions(k){
+  const all = [k.problem,k.beneficiaries,k.activity,k.evidence].filter(Boolean).join(" ");
+  const tier = TIERS[k.tier] ? k.tier : "concept";
+  const vague = hitsIn(all,VAGUE);
+  const under = hitsIn((k.beneficiaries||"")+" "+(k.problem||""),UNDER);
+  const hasN = /\d/.test(k.evidence||"");
+  const hasD = hitsIn(all,DURATION).length > 0;
+  const risks = detectRisks(all);
+  const o = {};
+
+  o.what = {
+    narrative:k.problem ? "Stated outcome: " + k.problem.trim() : "No outcome stated — the twin cannot describe what changes.",
+    confidence:capConfidence(k.problem ? "hypothesis" : "none",tier),
+    notes: vague.length ? ['Too vague to evaluate: uses "' + vague.join('", "') + '". Ask what specifically changes, for whom.'] : []
+  };
+  o.who = {
+    narrative:k.beneficiaries ? "Beneficiaries as described: " + k.beneficiaries.trim() : "No beneficiary group identified.",
+    confidence:capConfidence(k.beneficiaries ? "hypothesis" : "none",tier),
+    notes: under.length
+      ? ['Signals an underserved group ("' + under.join('", "') + '"). Probe how underserved, against what baseline.']
+      : (k.beneficiaries ? ["No degree of underservedness stated. Ask what these people do today instead."] : [])
+  };
+  o.howMuch = {
+    narrative:hasN ? "Scale evidence offered: " + k.evidence.trim() : "No scale, depth or duration evidence offered yet.",
+    confidence:capConfidence(hasN ? "emerging" : "none",tier),
+    notes:[
+      (!hasN && tier !== "concept") ? "Declared " + TIERS[tier].label + " but offered no quantitative evidence. Either the tier or the evidence is wrong." : null,
+      !hasD ? "Duration not stated — is the change one-off or recurring?" : null
+    ].filter(Boolean)
+  };
+  o.contribution = {
+    narrative:"Counterfactual requires a human. What would these beneficiaries do if this venture did not exist?",
+    confidence:"hypothesis",gated:true,
+    notes:["Held as a founder hypothesis, not proof. Revisited at the next incubation milestone."]
+  };
+  o.risk = {
+    narrative:risks.length
+      ? risks.length + " risk pattern(s) detected in the founder's own wording. Routed to a human — not scored."
+      : "No pattern from the trigger list appeared. Absence of a trigger is not evidence of absence of risk.",
+    confidence:"none",gated:true,flags:risks,
+    notes:["IRIS+ has no metrics aligned to the Risk dimension. This tool does not auto-score it, by design."]
+  };
+  return DIMENSIONS.map(function(d){ return Object.assign({},d,o[d.id]); });
+}
+
+function stakeholderLens(k){
+  const all = [k.problem,k.beneficiaries,k.activity,k.evidence].filter(Boolean).join(" ").toLowerCase();
+  return AREAS.map(function(a){
+    const found = a.probes.filter(function(p){ return kwHit(all,p); });
+    return {
+      id:a.id,label:a.label,hint:a.hint,
+      score:Math.min(found.length,4),
+      addressed:found.length > 0,
+      note: found.length
+        ? "Surfaced via the founder's own words: " + found.slice(0,4).join(", ") + "."
+        : "Not addressed anywhere in the narrative. Ask what this venture does about " + a.hint + "."
+    };
+  });
+}
+
+function buildProfile(k){
+  const text = [k.problem,k.beneficiaries,k.activity,k.evidence].filter(Boolean).join(" ");
+  const tierId = TIERS[k.tier] ? k.tier : "concept";
+  const dims = fiveDimensions(Object.assign({},k,{tier:tierId}));
+  const riskDim = dims.filter(function(d){ return d.id === "risk"; })[0];
+  const flags = (riskDim && riskDim.flags) || [];
+  const toc = theoryOfChange(k);
+  return {
+    id:k.id || "_intake",
+    name:k.name || "Unnamed venture",
+    sector:k.sector || k.category || "Uncategorised",
+    mission:k.mission || k.activity || "",
+    tier:TIERS[tierId],
+    toc:toc,
+    dims:dims,
+    stakeholders:stakeholderLens(k),
+    sdg:matchTax(text,SDGS,3),
+    iris:matchTax(text,IRIS,2),
+    riskFlags:flags,
+    gated:flags.length > 0,
+    publicNarrative:k.publicNarrative || k.problem || "",
+    publicThemes:matchTax(text,SDGS,2).concat(matchTax(text,IRIS,1)).map(function(t){ return t.label; })
+  };
+}
+
+/* ==========================================================================
+   BACKEND INTEGRATION — the real twin core (claude-opus-4-8 via /api/tag).
+   Same-origin by default; override with ?api=<base-url> for local testing.
+   On any failure the caller falls back to the local heuristic buildProfile().
+   ========================================================================== */
+
+const API_BASE = new URLSearchParams(location.search).get("api") || "";
+
+/* intake fields -> FounderInput contract */
+function buildFounderInput(k){
+  const narrative = [k.problem,k.beneficiaries,k.activity,k.evidence].filter(Boolean).join(" ").trim();
+  const toc = {};
+  if(k.activity) toc.activity = k.activity;
+  if(k.problem)  toc.outcome  = k.problem;
+  if(k.evidence) toc.output   = k.evidence;
+  return {
+    name: k.name || "Unnamed venture",
+    sector: k.category || k.sector || "Uncategorised",
+    narrative: narrative || (k.name || "Unnamed venture"),
+    toc: Object.keys(toc).length ? toc : undefined,
+    maturity: TIERS[k.tier] ? k.tier : "concept"
+  };
+}
+
+async function fetchProfile(k){
+  const res = await fetch(API_BASE + "/api/tag", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify(buildFounderInput(k))
+  });
+  if(!res.ok){
+    let msg = "Tagging failed (" + res.status + ").";
+    try { const e = await res.json(); if(e && e.error && e.error.message) msg = e.error.message; } catch(_){}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+
+/* ImpactProfile (backend contract) -> the frontend's internal profile shape.
+   Display fields come from the LLM; notes are reused from the local heuristic
+   so the readiness band and verification ledger keep working unchanged. */
+const STAGE_CAP = {input:"Input",activity:"Activity",output:"Output",outcome:"Outcome",impact:"Impact"};
+
+function apiToProfile(api, intake){
+  const local = buildProfile(intake);            // notes + fallback fields
+  const notesById = {}; local.dims.forEach(function(d){ notesById[d.id] = d.notes || []; });
+  const riskClaims = (api.reviewFlags || [])
+    .filter(function(f){ return f.kind === "risk"; })
+    .map(function(f){ return {id:"api", label:f.claim}; });
+
+  const dims = DIMENSIONS.map(function(dim){
+    const a = (api.dimensions || []).filter(function(x){ return x.dimension === dim.id; })[0] || {};
+    return Object.assign({}, dim, {
+      narrative: a.summary || "No assessment returned.",
+      confidence: a.confidence || "none",
+      gated: !!a.flaggedForReview || !!dim.gated,
+      notes: notesById[dim.id] || [],
+      flags: dim.id === "risk" ? riskClaims : undefined
+    });
+  });
+
+  const toc = (api.toc || []).map(function(n){
+    return {
+      stage: STAGE_CAP[n.stage] || n.stage,
+      text: n.text || null,
+      sdg:  (n.sdgTargets || []).map(function(c){ return {label:"SDG " + c}; }),
+      iris: (n.irisThemes || []).map(function(t){ return {label:t}; }),
+      needsSharpening: !!n.needsSharpening
+    };
+  });
+
+  const stakeholders = AREAS.map(function(area){
+    const s = (api.stakeholders || []).filter(function(x){ return x.area === area.id; })[0] || {};
+    const score = typeof s.score === "number" ? s.score : 0;
+    return {
+      id:area.id, label:area.label, hint:area.hint,
+      score:score, addressed:score > 0,
+      note: s.note || ("Not addressed in the narrative. Ask what this venture does about " + area.hint + ".")
+    };
+  });
+
+  const themes = (api.themeTags || []).map(function(t){ return {label:t}; });
+  return {
+    id: api.id || intake.id || "_intake",
+    name: api.name || local.name,
+    sector: api.sector || local.sector,
+    mission: api.mission || local.mission,
+    tier: TIERS[api.maturity] || local.tier,
+    toc: toc.length ? toc : local.toc,
+    dims: dims,
+    stakeholders: stakeholders,
+    sdg: themes,
+    iris: local.iris,
+    riskFlags: riskClaims,
+    gated: riskClaims.length > 0 || dims.some(function(d){ return d.id === "risk" && d.gated; }),
+    publicNarrative: api.publicNarrative || local.publicNarrative,
+    publicThemes: (api.themeTags && api.themeTags.length) ? api.themeTags : local.publicThemes
+  };
+}
+
+/* ==========================================================================
+   READINESS — the "worth backing" lens.
+   Readiness may be graded. Impact may not. They are computed separately and
+   NEVER averaged. Collapse them and this becomes the opaque index ESG
+   scoring is rightly criticised for.
+   ========================================================================== */
+
+const LV = ["absent","thin","workable","strong"];
+const LV_LABEL = {absent:"Not established",thin:"Thin",workable:"Workable",strong:"Strong"};
+const LV_PILL  = {absent:"coral",thin:"",workable:"lime",strong:"blue"};
+
+function assessReadiness(p,record){
+  record = record || {};
+  const crit = [];
+  const what = p.dims.filter(function(d){ return d.id === "what"; })[0];
+  const vague = (what.notes||[]).some(function(n){ return n.indexOf("Too vague") === 0; });
+  crit.push({label:"Outcome clarity",
+    why:"A six-month incubation needs something concrete to move. Vague missions cannot be coached.",
+    level:vague ? "thin" : (what.narrative.indexOf("No outcome") === 0 ? "absent" : "workable"),
+    detail:vague ? "Marketing language is standing in for a stated outcome." : "An outcome is stated in the founder's own words."});
+
+  const hm = p.dims.filter(function(d){ return d.id === "howMuch"; })[0];
+  const mism = (hm.notes||[]).some(function(n){ return n.indexOf("tier or the evidence") !== -1; });
+  crit.push({label:"Evidence matches declared stage",
+    why:"The maturity tier is a founder-declared honesty control. Over-claiming here is the first thing to catch.",
+    level:mism ? "thin" : (hm.confidence === "emerging" || hm.confidence === "evidenced" ? "workable" : "absent"),
+    detail:mism ? "Declared " + p.tier.label + ", but no quantitative evidence was offered." : hm.narrative});
+
+  const fs = Object.keys(record).map(function(k){ return record[k]; });
+  const sourced = fs.filter(function(x){ return x.provenance === "sourced"; }).length;
+  crit.push({label:"Record provenance",
+    why:"Self-reported founder data is gameable. Anything the team has not sourced stays unsourced on the card.",
+    level:fs.length === 0 ? "absent" : LV[Math.round((sourced/fs.length)*3)],
+    detail:fs.length ? sourced + " of " + fs.length + " fields confirmed against a real source."
+      : "No portfolio record attached — intake narrative only."});
+
+  const addr = p.stakeholders.filter(function(s){ return s.addressed; }).length;
+  crit.push({label:"Stakeholder footprint considered",
+    why:"Catches the B2B or deep-tech venture with no headline mission but a real footprint on its own team.",
+    level:LV[Math.round((addr/p.stakeholders.length)*3)],
+    detail:addr + " of " + p.stakeholders.length + " areas surfaced in the founder's own description."});
+
+  const concept = p.tier.id === "concept";
+  crit.push({label:"Fit with a no-equity, six-month coaching model",
+    why:"ZOLLHOF takes no equity and is funded by corporate partnerships. The question is coachability, not exit multiple.",
+    level:concept ? "workable" : "strong",
+    detail:concept ? "Concept stage: high coaching leverage, but expect no measurable outcome inside the programme."
+      : "Past concept stage: milestone check-ins can move real evidence within the programme window."});
+
+  let sc = 0; crit.forEach(function(c){ sc += LV.indexOf(c.level); });
+  const ratio = sc/(crit.length*3);
+  let band;
+  if(p.gated) band = {id:"gated",label:"Gated — human review required",
+    detail:'A risk flag is open. This does not mean "reject" — it means a mentor or the investment committee decides, not this tool.'};
+  else if(ratio < .34) band = {id:"not_ready",label:"Not ready to assess",
+    detail:"Too little is established to say anything defensible. Run the founder interview again before deciding."};
+  else if(ratio < .67) band = {id:"explorable",label:"Explorable",
+    detail:"Enough is on the table for a first conversation. The open questions below are what that conversation is for."};
+  else band = {id:"strong",label:"Strong candidate for a coaching slot",
+    detail:"Outcome, evidence and footprint hold up well enough to prioritise a mentor."};
+
+  return {criteria:crit.map(function(c){ return Object.assign({},c,{levelLabel:LV_LABEL[c.level],pill:LV_PILL[c.level]}); }),band:band};
+}
+
+/* ==========================================================================
+   FIXTURES — fictional Bavarian ventures.
+   Each field carries its own provenance:
+     sourced   a human read the cited source and confirmed the value
+     unsourced nobody has confirmed it yet — the verifier says so out loud
+     null      we hold nothing. Honest, not a gap to be filled with a guess.
+   `draft` is what the drafting model wrote. The verifier compares the two.
+   ========================================================================== */
+
+function f(value,provenance,source){ return {value:value,provenance:provenance,source:source||null}; }
+function nul(){ return {value:null,provenance:"unsourced",source:null}; }
+
+const STARTUPS = [
+  {
+    id:"ackerlicht", name:"Ackerlicht Robotics", sector:"AgTech — Physical AI",
+    category:"AgTech", tier:"pilot", lastEvaluated:"14 Jul 2026",
+    mission:"Laser-based weeding robot for smallholder vegetable farms, cutting herbicide dependence in Franconian test fields.",
+    problem:"Smallholder vegetable farms depend on herbicide because mechanical weeding is not economic below 50 hectares, degrading soil life season after season.",
+    beneficiaries:"Family-run smallholder farms in Middle Franconia with no agronomist on retainer.",
+    activity:"A laser weeding robot makes on-field passes that replace chemical and manual weeding.",
+    evidence:"40 pilot hectares across 2 partner farms; one season of measurement, recurring each season.",
+    publicNarrative:"Ackerlicht builds a laser weeding robot that lets smallholder vegetable farms cut herbicide use without the machinery costs that normally only make sense at large scale.",
+    record:{
+      stage:f("Pre-Seed","sourced","Founder onboarding interview, 12 Jun"),
+      team:f("5 FTE","sourced","Founder onboarding interview, 12 Jun"),
+      hq:f("Fürth, Bavaria","sourced","Company register entry"),
+      traction:f("40 pilot hectares in Middle Franconia","sourced","Field partner agreement, countersigned"),
+      herbicideReduction:f("reduces herbicide use by up to 80%","unsourced","Internal pilot measurement, single field")
+    },
+    draft:[
+      {field:"stage",statedValue:"Pre-Seed"},
+      {field:"team",statedValue:"5 FTE"},
+      {field:"traction",statedValue:"40 pilot hectares in Middle Franconia"},
+      {field:"herbicideReduction",statedValue:"reduces herbicide use by up to 80%"},
+      {field:"revenue",statedValue:"Already profitable with €2M ARR"}
+    ]
+  },
+  {
+    id:"kausal", name:"Kausal Agents", sector:"AI & Agentic Systems",
+    category:"AI & Agentic Systems", tier:"scale", lastEvaluated:"11 Jul 2026",
+    mission:"Agentic workflow layer letting Mittelstand manufacturers automate quote-to-order without replacing their ERP.",
+    problem:"Mittelstand manufacturers lose days per quote to manual order entry, so small customers get deprioritised.",
+    beneficiaries:"Mid-size SME manufacturers and the staff currently doing repetitive order entry.",
+    activity:"An agentic layer handles quote and order-entry workflows on top of the existing ERP, with no layoffs attributable to the automation to date.",
+    evidence:"3 design partners live in production; quote turnaround cut from 3 days to 4 hours, ongoing.",
+    publicNarrative:"Kausal Agents automates quote-to-order handling for mid-size manufacturers, freeing staff from repetitive order entry without ripping out the systems they already run.",
+    record:{
+      stage:f("Seed","sourced","Founder interview + public company page"),
+      team:f("8 FTE","sourced","Founder interview"),
+      hq:f("Nuremberg, Bavaria","sourced","Company register entry"),
+      traction:f("3 design partners live in production","sourced","Reference call notes, 3 Jun"),
+      turnaround:f("quote turnaround from 3 days to 4 hours","sourced","Design partner case note"),
+      employmentEffect:nul()
+    },
+    draft:[
+      {field:"stage",statedValue:"Seed"},
+      {field:"team",statedValue:"8 FTE"},
+      {field:"traction",statedValue:"3 design partners live in production"},
+      {field:"turnaround",statedValue:"quote turnaround from 3 days to 4 hours"},
+      {field:"employmentEffect",statedValue:"No layoffs attributable to automation to date"}
+    ]
+  },
+  {
+    id:"pneuma", name:"Pneuma Health", sector:"Digital Health",
+    category:"Digital Health", tier:"pilot", lastEvaluated:"09 Jul 2026",
+    mission:"Remote respiratory monitoring wearable for post-discharge COPD patients, piloting with a Nuremberg clinic network.",
+    problem:"COPD patients are readmitted within 30 days because deterioration after discharge goes unnoticed until it is acute.",
+    beneficiaries:"Post-discharge COPD patients and the clinicians carrying their follow-up caseload.",
+    activity:"A wearable continuously monitors SpO2 and respiration after discharge and raises readmission-risk flags to clinicians.",
+    evidence:"About 85 patients in the active pilot with one clinic partner.",
+    publicNarrative:"Pneuma Health monitors breathing at home after a hospital stay, so clinicians hear about a patient deteriorating before it becomes an emergency.",
+    record:{
+      stage:f("Pilot","sourced","Founder interview"),
+      team:f("6 FTE","sourced","Founder interview"),
+      hq:f("Nuremberg, Bavaria","sourced","Clinic partner agreement"),
+      traction:f("85 patients in active pilot","sourced","Clinic partner statement, dated 2 Jun"),
+      readmission:nul()
+    },
+    draft:[
+      {field:"stage",statedValue:"Pilot"},
+      {field:"team",statedValue:"6 FTE"},
+      {field:"traction",statedValue:"85 patients in active pilot"},
+      {field:"readmission",statedValue:"Reduces readmission by 30%"}
+    ]
+  },
+  {
+    id:"sonnwerk", name:"Sonnwerk Grid", sector:"Climate & Energy",
+    category:"Climate & Energy", tier:"scale", lastEvaluated:"13 Jul 2026",
+    mission:"Software that lets mid-size manufacturers time-shift energy-intensive processes into cheaper, cleaner grid windows.",
+    problem:"Mid-size manufacturers run energy-intensive processes on fixed schedules, paying peak prices for the dirtiest grid hours.",
+    beneficiaries:"Mid-size Bavarian manufacturers and, indirectly, the regional grid and everyone on it.",
+    activity:"Automated scheduling shifts load-shiftable processes into low-carbon-intensity windows.",
+    evidence:"6 factory customers live; roughly 1,900 tCO2e avoided across the customer base on a 12-month rolling basis.",
+    publicNarrative:"Sonnwerk Grid shifts factory energy use into cleaner, cheaper hours, cutting both bills and the carbon intensity of what manufacturers draw from the grid.",
+    record:{
+      stage:f("Series A","sourced","Press release + public company page"),
+      team:f("14 FTE","sourced","Public company page"),
+      hq:f("Erlangen, Bavaria","sourced","Company register entry"),
+      traction:f("6 factory customers live","sourced","Customer logos, each cross-checked individually"),
+      carbon:f("1,900 tCO2e avoided over 12 months","sourced","Third-party sustainability audit, cited report"),
+      savings:nul()
+    },
+    draft:[
+      {field:"stage",statedValue:"Series A"},
+      {field:"team",statedValue:"14 FTE"},
+      {field:"traction",statedValue:"6 factory customers live"},
+      {field:"carbon",statedValue:"1,900 tCO2e avoided over 12 months"},
+      {field:"savings",statedValue:"Cost savings average 22% per customer"}
+    ]
+  },
+  {
+    id:"lasttier", name:"LastTier Logistics", sector:"Mobility & Logistics",
+    category:"Mobility & Logistics", tier:"concept", lastEvaluated:"02 Jul 2026",
+    mission:"Driverless flatbed transport for long, awkward goods within factory intralogistics — spun out of a prior incubation pivot.",
+    problem:"Moving long-format goods across a factory floor still needs manual forklift trips, which is where most floor injuries happen.",
+    beneficiaries:"Factory floor staff currently making manual forklift trips.",
+    activity:"Planned: autonomous driverless transport of long-format goods across factory floors, operating unsupervised alongside staff.",
+    evidence:"",
+    publicNarrative:"LastTier is developing driverless transport for long, awkward goods inside factories — currently at concept stage, with no field deployment yet.",
+    record:{
+      stage:f("Pre-Seed","sourced","Founder interview"),
+      team:f("4 FTE","sourced","Founder interview"),
+      hq:f("Ingolstadt, Bavaria","sourced","Founder interview"),
+      traction:f("no live deployments yet","sourced","Founder interview, self-disclosed"),
+      injuryTarget:nul()
+    },
+    draft:[
+      {field:"stage",statedValue:"Pre-Seed"},
+      {field:"team",statedValue:"4 FTE"},
+      {field:"traction",statedValue:"no live deployments yet"},
+      {field:"injuryTarget",statedValue:"Targeting 20% reduction in forklift-related incidents"}
+    ]
+  },
+  {
+    id:"weberbund", name:"Weberbund Analytics", sector:"Robotics & Physical AI",
+    category:"Robotics & Physical AI", tier:"pilot", lastEvaluated:"08 Jul 2026",
+    mission:"Computer-vision defect detection for textile and craft manufacturers, cutting scrap rates for small producers.",
+    problem:"Small independent textile producers ship defects they cannot afford to inspect for, and absorb the scrap cost themselves.",
+    beneficiaries:"Small independent textile and craft manufacturers.",
+    activity:"Camera rigs flag defects on the production line in real time before shipment.",
+    evidence:"2 manufacturers piloting the system; scrap measured at a single site so far.",
+    publicNarrative:"Weberbund catches textile defects on the line in real time, so small producers stop absorbing the cost of scrap they had no way to inspect for.",
+    record:{
+      stage:f("Seed","sourced","Founder interview + public startup profile"),
+      team:f("7 FTE","sourced","Founder interview"),
+      hq:f("Augsburg, Bavaria","sourced","Company register entry"),
+      traction:f("2 manufacturers piloting the system","sourced","Site visit notes, 28 May"),
+      scrap:f("scrap rate reduced by 35% at pilot site","unsourced","Single-site pilot measurement")
+    },
+    draft:[
+      {field:"stage",statedValue:"Seed"},
+      {field:"team",statedValue:"7 FTE"},
+      {field:"traction",statedValue:"2 manufacturers piloting the system"},
+      {field:"scrap",statedValue:"scrap rate reduced by 35% at pilot site"}
+    ]
+  }
+];
+
+const CATEGORIES = ["All","AgTech","AI & Agentic Systems","Robotics & Physical AI","Digital Health","Climate & Energy","Mobility & Logistics"];
+
+/* Disclosed, deliberately-seeded mis-claims for the live catch. */
+const SEEDED = [
+  {field:"traction",statedValue:"1,200 farms onboarded across Bavaria",seeded:true},
+  {field:"funding", statedValue:"€2.4M raised in an oversubscribed round",seeded:true}
+];
+
+/* ==========================================================================
+   APP STATE
+   ========================================================================== */
+
+const state = {
+  route:{view:"portfolio",id:null},
+  tab:"dimensions",
+  cat:"All",
+  simCat:"AgTech",
+  render:"internal",
+  seeded:{},            /* startupId -> bool */
+  labRun:false,
+  reviewStatus:{},      /* "startupId::flagId" -> "pending"|"cleared" */
+  reEvaluated:{},       /* startupId -> date string */
+  intakeStep:1,
+  intakeData:{tier:"concept"},
+  intakeProfile:null,
+  cmdkIndex:0,
+  cmdkItems:[]
+};
+
+const esc = function(s){
+  return String(s === null || s === undefined ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+};
+const $ = function(id){ return document.getElementById(id); };
+const pill = function(t,cls){ return '<span class="pill sm ' + (cls||"") + '">' + esc(t) + '</span>'; };
+const byId = function(id){ return STARTUPS.filter(function(s){ return s.id === id; })[0]; };
+
+function toast(title,msg){
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML = "<b>" + esc(title) + "</b>" + esc(msg);
+  $("toasts").appendChild(el);
+  window.setTimeout(function(){ el.remove(); },4200);
+}
+
+function profileOf(s){
+  return buildProfile({
+    id:s.id,name:s.name,sector:s.sector,category:s.category,tier:s.tier,mission:s.mission,
+    problem:s.problem,beneficiaries:s.beneficiaries,activity:s.activity,evidence:s.evidence,
+    publicNarrative:s.publicNarrative
+  });
+}
+function claimsFor(s){
+  const base = s.draft.slice();
+  return state.seeded[s.id] ? base.concat(SEEDED) : base;
+}
+function verifyOf(s){
+  const rs = verifyAll(claimsFor(s),s.record);
+  return {results:rs,counts:tally(rs),corrections:corrections(rs)};
+}
+function lastEval(s){ return state.reEvaluated[s.id] || s.lastEvaluated; }
+
+/* Review queue items derive from the risk gate + the contribution hypothesis. */
+function reviewItems(s,p){
+  const items = p.riskFlags.map(function(fl){
+    return {id:"risk::"+fl.id,kind:"risk",claim:fl.label,
+      why:'Triggered by the founder\'s own wording: "' + fl.matched.join('", "') + '"'};
+  });
+  items.push({id:"contribution",kind:"contribution",
+    claim:"Counterfactual claim for " + s.name + " is unproven.",
+    why:"Contribution is never auto-scored. A mentor confirms or rejects the founder's hypothesis at the next milestone."});
+  const v = verifyOf(s);
+  v.results.filter(function(r){ return r.verdict === V.MISS || r.verdict === V.UNKNOWN; }).forEach(function(r,i){
+    items.push({id:"claim::"+r.field+"::"+i,kind:"claim",
+      claim:'Unverified claim: "' + r.statedValue + '"',why:V_LONG[r.verdict]});
+  });
+  return items.map(function(it){
+    return Object.assign({},it,{status:state.reviewStatus[s.id + "::" + it.id] || "pending"});
+  });
+}
+function pendingCount(s){
+  const p = profileOf(s);
+  return reviewItems(s,p).filter(function(i){ return i.status === "pending"; }).length;
+}
+
+/* ==========================================================================
+   RADAR — evidence strength per dimension. Gated axes render hollow and are
+   excluded from the fill, because they are not scored.
+   ========================================================================== */
+
+function radar(p){
+  const size = 250, cx = size/2, cy = size/2 + 2, R = 78;
+  const vals = p.dims.map(function(d){
+    return {label:d.label,v:CONF_ORDER.indexOf(d.confidence),gated:!!d.gated};
+  });
+  const pt = function(i,r){
+    const a = -Math.PI/2 + i*2*Math.PI/5;
+    return [cx + Math.cos(a)*r, cy + Math.sin(a)*r];
+  };
+  let rings = "", spokes = "", labels = "", dots = "";
+  for(let k = 1; k <= 3; k++){
+    rings += '<polygon points="' + vals.map(function(_,i){
+      return pt(i,R*k/3).map(function(n){ return n.toFixed(1); }).join(",");
+    }).join(" ") + '" fill="none" stroke="#000" stroke-width="1.5"/>';
+  }
+  vals.forEach(function(d,i){
+    const e = pt(i,R), l = pt(i,R+22);
+    spokes += '<line x1="' + cx + '" y1="' + cy + '" x2="' + e[0].toFixed(1) + '" y2="' + e[1].toFixed(1) + '" stroke="#000" stroke-width="1.5"/>';
+    const anch = Math.abs(l[0]-cx) < 6 ? "middle" : (l[0] > cx ? "start" : "end");
+    labels += '<text x="' + l[0].toFixed(1) + '" y="' + (l[1]+4).toFixed(1) + '" text-anchor="' + anch
+      + '" font-size="10" font-weight="800" font-family="' + (d.gated ? "inherit" : "inherit")
+      + '" fill="#000">' + esc(d.label.toUpperCase()) + '</text>';
+    const q = pt(i,R*(d.v/3));
+    dots += '<circle cx="' + q[0].toFixed(1) + '" cy="' + q[1].toFixed(1) + '" r="5" fill="'
+      + (d.gated ? "#fff" : "#1A16F0") + '" stroke="#000" stroke-width="2.5"/>';
+  });
+  const poly = vals.map(function(d,i){ return pt(i,R*(d.v/3)).map(function(n){ return n.toFixed(1); }).join(","); }).join(" ");
+
+  return '<svg viewBox="0 0 ' + size + ' ' + (size+8) + '" width="100%" style="max-width:270px;display:block;margin:0 auto"'
+    + ' role="img" aria-label="Evidence strength by impact dimension">'
+    + rings + spokes
+    + '<polygon points="' + poly + '" fill="#B9A8F5" fill-opacity="0.55" stroke="#1A16F0" stroke-width="3"/>'
+    + dots + labels + '</svg>'
+    + '<div class="legend"><span><i style="background:#1A16F0"></i>evidence established</span>'
+    + '<span><i style="background:#fff"></i>gated — human review</span></div>'
+    + '<p class="radar-note">Axis is evidence strength, not impact magnitude. Nothing here is summed.</p>';
+}
+
+/* ==========================================================================
+   VIEWS
+   ========================================================================== */
+
+const RAIL = [
+  {group:"Portfolio",items:[
+    {view:"portfolio",label:"All ventures",n:"01"},
+    {view:"simulate", label:"Sector simulation",n:"02"}
+  ]},
+  {group:"Tools",items:[
+    {view:"verifier",label:"Verifier lab",n:"03"},
+    {view:"intake",  label:"Founder intake",n:"04"}
+  ]}
+];
+
+function renderRail(){
+  let html = "";
+  RAIL.forEach(function(g){
+    html += '<div class="rail-group"><div class="rail-label">' + esc(g.group) + '</div>'
+      + g.items.map(function(it){
+          return '<button class="rail-item" data-nav="' + esc(it.view) + '" aria-current="'
+            + (state.route.view === it.view) + '"><span class="n">' + esc(it.n) + '</span>' + esc(it.label) + '</button>';
+        }).join("") + '</div>';
+  });
+
+  const flagged = STARTUPS.filter(function(s){ return pendingCount(s) > 0; });
+  html += '<div class="rail-group"><div class="rail-label">Twins</div>'
+    + STARTUPS.map(function(s){
+        const n = pendingCount(s);
+        return '<button class="rail-item" data-nav="twin" data-id="' + esc(s.id) + '" aria-current="'
+          + (state.route.view === "twin" && state.route.id === s.id) + '">' + esc(s.name)
+          + (n ? '<span class="badge-n">' + n + '</span>' : "") + '</button>';
+      }).join("") + '</div>';
+
+  html += '<div class="rail-foot"><b>' + flagged.length + ' of ' + STARTUPS.length
+    + '</b> twins have an open review item. Nothing reaches a report until a human clears it.</div>';
+  $("rail").innerHTML = html;
+}
+
+/* ---- portfolio ---- */
+function viewPortfolio(){
+  const list = state.cat === "All" ? STARTUPS : STARTUPS.filter(function(s){ return s.category === state.cat; });
+  let sourced = 0, total = 0, pend = 0;
+  STARTUPS.forEach(function(s){
+    Object.keys(s.record).forEach(function(k){ total++; if(s.record[k].provenance === "sourced") sourced++; });
+    pend += pendingCount(s);
+  });
+  const tiers = {concept:0,pilot:0,scale:0};
+  STARTUPS.forEach(function(s){ tiers[s.tier]++; });
+
+  $("viewHead").innerHTML =
+    '<div class="view-head-row"><div>'
+    + '<div class="sub">Zollhof incubation team · internal</div>'
+    + '<h1>Impact digital twin</h1>'
+    + '<p class="desc">Every venture carries a tiered impact profile — never a single score, never a leaderboard. '
+    + 'Open a twin for the five-dimensions engine, the verification ledger and the review gate.</p>'
+    + '</div><div class="head-actions">'
+    + '<button class="pill blue" data-nav="intake">New intake →</button>'
+    + '</div></div>';
+
+  $("viewBody").innerHTML =
+    '<div class="cells c4" style="margin-bottom:16px">'
+      + '<div class="cell"><div class="eyebrow">Ventures</div><div class="stat">' + STARTUPS.length + '</div>'
+        + '<div class="stat-sub">' + tiers.concept + ' concept · ' + tiers.pilot + ' pilot · ' + tiers.scale + ' scale</div></div>'
+      + '<div class="cell blue"><div class="eyebrow">Fields source-confirmed</div><div class="stat">'
+        + Math.round(sourced/total*100) + '%</div><div class="stat-sub">' + sourced + ' of ' + total + ' record fields</div></div>'
+      + '<div class="cell ' + (pend ? "black" : "lime") + '"><div class="eyebrow">Open review items</div><div class="stat">'
+        + pend + '</div><div class="stat-sub">awaiting a human decision</div></div>'
+      + '<div class="cell pink"><div class="eyebrow">Composite scores shown</div><div class="stat">0</div>'
+        + '<div class="stat-sub">by design, and permanently</div></div>'
+    + '</div>'
+
+    + '<div class="filterbar"><span class="lbl">Domain</span>'
+    + CATEGORIES.map(function(c){
+        return '<button class="pill ' + (c === state.cat ? "blue" : "") + '" data-cat="' + esc(c) + '">' + esc(c) + '</button>';
+      }).join("") + '</div>'
+
+    + (list.length
+        ? '<div class="cells c3">' + list.map(function(s){
+            const p = profileOf(s), v = verifyOf(s), n = pendingCount(s);
+            const pub = state.render === "public";
+            return '<button class="card" data-nav="twin" data-id="' + esc(s.id) + '">'
+              + '<div class="card-top"><div><h3>' + esc(s.name) + '</h3>'
+              + '<div class="sector">' + esc(s.sector) + '</div></div>'
+              + '<span class="pill sm ' + (p.tier.id === "scale" ? "blue" : p.tier.id === "pilot" ? "lime" : "")
+              + '">' + esc(p.tier.label) + '</span></div>'
+              + '<div class="mission">' + esc(pub ? s.publicNarrative : s.mission) + '</div>'
+              + '<div class="chips">' + p.sdg.slice(0,2).map(function(t){
+                  return '<span class="chip sdg">' + esc(t.label) + '</span>'; }).join("") + '</div>'
+              + '<div class="card-foot"><span>Open twin →</span><span>'
+              + (pub ? "" : (v.counts.flagged ? pill(v.counts.flagged + " flagged","coral")
+                  : n ? pill(n + " pending","coral") : pill("clear","lime")))
+              + '</span></div></button>';
+          }).join("") + '</div>'
+        : '<div class="empty">No ventures recorded under ' + esc(state.cat) + '. That absence is itself a portfolio finding.</div>');
+}
+
+/* ---- twin ---- */
+const TWIN_TABS = [
+  {id:"dimensions",label:"Five dimensions"},
+  {id:"toc",        label:"Theory of change"},
+  {id:"stakeholders",label:"Stakeholders"},
+  {id:"verification",label:"Verification"},
+  {id:"readiness",  label:"Readiness"},
+  {id:"review",     label:"Review queue"}
+];
+
+function viewTwin(id){
+  const s = byId(id);
+  if(!s){
+    $("viewHead").innerHTML = '<h1>Not found</h1><p class="desc">No venture with that id.</p>';
+    $("viewBody").innerHTML = '<div class="empty">Nothing to show. Pick a twin from the rail.</div>';
+    return;
+  }
+  const p = profileOf(s), v = verifyOf(s), items = reviewItems(s,p);
+  const pendN = items.filter(function(i){ return i.status === "pending"; }).length;
+
+  if(state.render === "public"){ return viewPublic(s,p); }
+
+  $("viewHead").innerHTML =
+    '<div class="view-head-row"><div>'
+    + '<div class="sub">' + esc(s.sector) + ' · ' + esc(s.record.hq.value) + ' · ' + esc(s.record.stage.value) + ' · ' + esc(s.record.team.value) + '</div>'
+    + '<h1>' + esc(s.name) + '</h1>'
+    + '<p class="desc">' + esc(s.mission) + '</p>'
+    + '<p class="note" style="margin-top:8px"><b>Evidence bar at ' + esc(p.tier.label) + ' tier:</b> ' + esc(p.tier.bar) + '</p>'
+    + '</div><div class="head-actions" style="flex-direction:column;align-items:flex-end;gap:8px">'
+      + '<div class="head-actions">'
+        + '<span class="pill ' + (p.tier.id === "scale" ? "blue" : p.tier.id === "pilot" ? "lime" : "") + '">' + esc(p.tier.label) + ' tier</span>'
+        + (p.gated ? '<span class="pill coral">Gated</span>' : '')
+        + '<button class="pill" data-reeval="' + esc(s.id) + '">Re-run twin core</button>'
+      + '</div>'
+      + '<div class="note">Last re-evaluated: ' + esc(lastEval(s)) + '</div>'
+    + '</div></div>'
+    + '<div class="tabs" role="tablist">' + TWIN_TABS.map(function(t){
+        let cnt = "";
+        if(t.id === "verification") cnt = '<span class="cnt' + (v.counts.flagged ? " alert" : "") + '">' + v.counts.verified + "/" + v.counts.total + '</span>';
+        if(t.id === "review" && pendN) cnt = '<span class="cnt alert">' + pendN + '</span>';
+        return '<button class="tab" role="tab" data-tab="' + esc(t.id) + '" aria-selected="'
+          + (state.tab === t.id) + '">' + esc(t.label) + cnt + '</button>';
+      }).join("") + '</div>';
+
+  const tab = state.tab;
+  let body = "";
+
+  if(tab === "dimensions"){
+    body = '<div class="cells side">'
+      + '<div class="cell"><div class="eyebrow">Evidence by dimension</div>' + radar(p) + '</div>'
+      + '<div class="cell" style="padding:16px">' + p.dims.map(function(d){
+          return '<div class="dim-row" data-dim="' + esc(d.id) + '">'
+            + '<div class="dl">' + esc(d.label) + '</div>'
+            + '<div class="dm"><div class="dq">' + esc(d.q) + '</div>'
+            + '<div class="dtext">' + esc(d.narrative) + '</div>'
+            + (d.gated ? '<div class="flag-callout">⚑ Flagged for human review</div>' : "")
+            + ((d.notes && d.notes.length) ? '<ul class="dnotes">' + d.notes.map(function(n){
+                return '<li>' + esc(n) + '</li>'; }).join("") + '</ul>' : "")
+            + '</div><div class="dr">' + (d.gated ? pill("not scored","coral")
+                : pill(CONF_LABEL[d.confidence],CONF_PILL[d.confidence])) + '</div></div>';
+        }).join("") + '</div></div>';
+  }
+
+  else if(tab === "toc"){
+    body = '<div class="toc-chain">' + p.toc.map(function(n){
+        return '<div class="toc-node' + (n.text ? "" : " empty") + '">'
+          + '<div class="stage">' + esc(n.stage) + '</div>'
+          + '<div class="txt">' + esc(n.text || "not stated — legitimate at this tier") + '</div>'
+          + '<div class="chips" style="margin-top:9px">'
+            + n.sdg.map(function(t){ return '<span class="chip sdg">SDG ' + esc(t.target) + '</span>'; }).join("")
+            + n.iris.map(function(t){ return '<span class="chip iris">IRIS+ ' + esc(t.label) + '</span>'; }).join("")
+          + '</div>'
+          + (n.needsSharpening ? '<div class="sharp">⚠ Needs sharpening</div>' : "")
+          + '</div>';
+      }).join("") + '</div>'
+      + '<div class="panel" style="margin-top:16px"><div class="panel-head"><h3>Why chips sit on Outcome and Impact only</h3></div>'
+      + '<div class="panel-body"><p class="note">Theme tags attach to the nodes where an outcome claim actually lives, not to the venture as a whole. '
+      + 'That keeps comparison at the taxonomy layer — a health venture and a climate venture are comparable by which SDG target they touch, '
+      + 'never by their raw KPIs. <b>Needs sharpening</b> marks a node too vague or too unquantified to evaluate.</p></div></div>';
+  }
+
+  else if(tab === "stakeholders"){
+    body = '<div class="panel"><div class="panel-head"><h3>Broad stakeholder impact</h3>'
+      + '<span class="meta">B Lab impact areas · checklist, not certification</span></div>'
+      + '<div class="panel-body">' + p.stakeholders.map(function(a){
+          return '<div class="stake-row"><div class="sl">' + esc(a.label) + '</div>'
+            + '<div class="stake-track"><div class="stake-fill' + (a.addressed ? "" : " zero")
+            + '" style="width:' + (a.addressed ? a.score*25 : 100) + '%"></div></div>'
+            + '<div class="sn">' + esc(a.note) + '</div></div>';
+        }).join("")
+      + '<p class="note" style="margin-top:14px">This lens is what catches a B2B or deep-tech venture with no headline social mission '
+      + 'but a real footprint on its own team and customers. An unaddressed area is a coaching prompt, not a failing grade.</p>'
+      + '</div></div>';
+  }
+
+  else if(tab === "verification"){
+    body = '<div class="panel"><div class="panel-head"><h3>Claim verification ledger</h3>'
+      + '<span class="meta">deterministic · no model involved</span></div><div class="panel-body">'
+      + '<div class="chips" style="gap:6px;margin-bottom:14px">'
+        + pill(v.counts.verified + " verified","blue")
+        + (v.counts.unsourced ? pill(v.counts.unsourced + " record unsourced","lime") : "")
+        + (v.counts.flagged ? pill(v.counts.flagged + " unverified","coral") : "")
+      + '</div>'
+      + '<div class="tbl-wrap"><table class="tbl"><thead><tr>'
+      + '<th>Claim as drafted</th><th>Source record holds</th><th>Verdict</th></tr></thead><tbody>'
+      + v.results.map(function(r){
+          return '<tr' + (V_PILL[r.verdict] === "coral" ? ' class="bad"' : "") + '>'
+            + '<td><span class="val">' + esc(r.statedValue) + '</span>'
+            + (r.source ? '<div class="src">' + esc(r.source) + '</div>' : '<div class="src">no source on file</div>') + '</td>'
+            + '<td><span class="val">' + esc(r.recordedValue === null ? "—" : r.recordedValue) + '</span></td>'
+            + '<td>' + pill(V_SHORT[r.verdict],V_PILL[r.verdict]) + '</td></tr>';
+        }).join("") + '</tbody></table></div>'
+      + (v.corrections.length
+          ? '<div class="correction"><h4>Sent back to the drafting model</h4><ul>'
+            + v.corrections.map(function(c){ return '<li>' + esc(c) + '</li>'; }).join("") + '</ul></div>'
+          : '<p class="note" style="margin-top:12px">Every drafted claim resolved cleanly against the record.</p>')
+      + '<div class="head-actions" style="margin-top:14px">'
+        + '<button class="pill ' + (state.seeded[s.id] ? "" : "coral") + '" data-seed="' + esc(s.id) + '"'
+          + (state.seeded[s.id] ? " disabled" : "") + '>Seed an imprecise claim</button>'
+        + (state.seeded[s.id] ? '<button class="pill" data-unseed="' + esc(s.id) + '">Remove seeded claims</button>' : "")
+        + '<button class="pill blue" data-nav="verifier">Open verifier lab →</button>'
+      + '</div>'
+      + (state.seeded[s.id] ? '<p class="note" style="margin-top:10px"><b>Say this out loud:</b> the flagged rows were deliberately seeded '
+          + 'so the catch is visible. It demonstrates the check — it is not a real finding.</p>' : "")
+      + '</div></div>';
+  }
+
+  else if(tab === "readiness"){
+    const rd = assessReadiness(p,s.record);
+    body = '<div class="cells side"><div class="cell">'
+      + '<div class="band ' + rd.band.id + '"><h4>' + esc(rd.band.label) + '</h4><p>' + esc(rd.band.detail) + '</p></div>'
+      + rd.criteria.map(function(c){
+          return '<div class="crit"><div><div class="cl">' + esc(c.label) + '</div>'
+            + '<div class="cw">' + esc(c.why) + '</div><div class="cd">' + esc(c.detail) + '</div></div>'
+            + pill(c.levelLabel,c.pill) + '</div>';
+        }).join("")
+      + '</div><div class="cell pink"><div class="eyebrow">Why this is a separate lens</div>'
+      + '<p style="font-size:12.5px">Readiness is graded. Impact is not. They are computed separately and are '
+      + '<b>never averaged into one figure</b>.</p>'
+      + '<p style="font-size:12.5px;margin-top:10px">A venture can be highly ready and impact-thin, or deeply impactful and '
+      + 'not ready. The moment those collapse into a single number, this becomes the opaque index that ESG scoring is '
+      + 'rightly criticised for — and it fits a no-equity coaching programme badly.</p>'
+      + '<p style="font-size:12.5px;margin-top:10px">This is admissions and coaching triage. It is not investment advice.</p>'
+      + '</div></div>';
+  }
+
+  else if(tab === "review"){
+    body = '<div class="panel"><div class="panel-head"><h3>Human review queue</h3>'
+      + '<span class="meta">' + pendN + ' pending · a gate, not a score</span></div><div class="panel-body">'
+      + items.map(function(it){
+          return '<div class="review-item">'
+            + '<span class="pill sm ' + (it.kind === "risk" ? "coral" : it.kind === "claim" ? "coral" : "lav") + '">' + esc(it.kind) + '</span>'
+            + '<span class="claim">' + esc(it.claim) + '<span class="why">' + esc(it.why) + '</span></span>'
+            + (it.status === "pending"
+                ? '<button class="pill lime" data-clear="' + esc(s.id) + '::' + esc(it.id) + '">Mark reviewed</button>'
+                : '<button class="pill inert" data-reopen="' + esc(s.id) + '::' + esc(it.id) + '">Cleared · reopen</button>')
+            + '</div>';
+        }).join("")
+      + '<p class="note" style="margin-top:14px">Risk-dimension flags and contribution hypotheses never resolve automatically. '
+      + 'IRIS+ itself has no metrics aligned to the Risk dimension, so folding this silently into a profile would be indefensible.</p>'
+      + '</div></div>';
+  }
+
+  $("viewBody").innerHTML = body;
+}
+
+/* ---- public render ---- */
+function viewPublic(s,p){
+  $("viewHead").innerHTML =
+    '<div class="view-head-row"><div><div class="sub">Public website widget · read-only</div>'
+    + '<h1>' + esc(s.name) + '</h1></div>'
+    + '<div class="head-actions"><button class="pill blue" id="backInternal">Back to internal →</button></div></div>';
+  $("viewBody").innerHTML =
+    '<div class="cells side"><div class="cell" style="padding:28px">'
+      + '<span class="pill ' + (p.tier.id === "scale" ? "blue" : p.tier.id === "pilot" ? "lime" : "") + '">' + esc(p.tier.label) + ' tier</span>'
+      + '<h2 style="font-size:26px;margin:14px 0 6px">' + esc(s.name) + '</h2>'
+      + '<div class="sub" style="font-size:11px;font-weight:800;text-transform:uppercase;color:var(--muted)">' + esc(s.sector) + '</div>'
+      + '<p style="font-size:15px;margin-top:16px">' + esc(s.publicNarrative) + '</p>'
+      + '<div class="chips" style="margin-top:18px">' + p.publicThemes.map(function(t){
+          return '<span class="chip sdg">' + esc(t) + '</span>'; }).join("") + '</div>'
+    + '</div><div class="cell black"><div class="eyebrow">What this view deliberately omits</div>'
+      + '<p style="font-size:12.5px">No radar. No confidence labels. No stakeholder bars. No verification ledger. '
+      + 'No readiness band. And above all, no number that ranks this venture against any other.</p>'
+      + '<p style="font-size:12.5px;margin-top:11px">Removing the comparative figure removes most of the incentive to '
+      + 'perform impact rather than create it — and protects Zollhof from pressure to favour a good story over real but '
+      + 'unglamorous B2B or deep-tech value.</p>'
+      + '<p style="font-size:12.5px;margin-top:11px">The full profile stays internal, where it does its actual job: coaching.</p>'
+    + '</div></div>';
+}
+
+/* ---- sector simulation ---- */
+function simulate(cat){
+  const rows = STARTUPS.filter(function(s){ return s.category === cat; }).map(function(s){
+    return {s:s,p:profileOf(s),v:verifyOf(s)};
+  });
+  const themes = {};
+  rows.forEach(function(r){
+    r.p.sdg.concat(r.p.iris).forEach(function(t){
+      if(!themes[t.label]) themes[t.label] = [];
+      themes[t.label].push(r.s.name);
+    });
+  });
+  const stake = AREAS.map(function(a){
+    const hit = rows.filter(function(r){
+      return r.p.stakeholders.filter(function(x){ return x.id === a.id; })[0].addressed;
+    });
+    return {label:a.label,hint:a.hint,count:hit.length,of:rows.length};
+  });
+  let sourced = 0, total = 0;
+  rows.forEach(function(r){
+    Object.keys(r.s.record).forEach(function(k){ total++; if(r.s.record[k].provenance === "sourced") sourced++; });
+  });
+  const tiers = {concept:0,pilot:0,scale:0};
+  rows.forEach(function(r){ tiers[r.p.tier.id]++; });
+  const covered = Object.keys(themes);
+  const white = SDGS.filter(function(t){ return covered.indexOf(t.label) === -1; }).slice(0,3).map(function(t){ return t.label; });
+
+  const gaps = [];
+  const un = stake.filter(function(x){ return x.count === 0; });
+  if(un.length) gaps.push("No venture here addresses " + un.map(function(x){ return x.label; }).join(", ")
+    + " in its own description. That is a coaching prompt, not a verdict.");
+  if(total && sourced/total < .8) gaps.push("Only " + sourced + " of " + total
+    + " record fields in this cohort are source-confirmed. Nothing should go external until that changes.");
+  if(covered.length <= 1) gaps.push("This cohort maps onto a single theme — either the domain is genuinely narrow, or the narratives are too thin to tag.");
+  const gated = rows.filter(function(r){ return r.p.gated; }).length;
+  if(gated) gaps.push(gated + " venture(s) here carry an open risk flag awaiting a human decision.");
+
+  return {rows:rows,themes:themes,stake:stake,sourced:sourced,total:total,tiers:tiers,white:white,gaps:gaps};
+}
+
+function viewSimulate(){
+  const cat = state.simCat, sim = simulate(cat);
+  $("viewHead").innerHTML =
+    '<div class="view-head-row"><div><div class="sub">Cohort view</div><h1>Sector simulation</h1>'
+    + '<p class="desc">Pick a domain and see the whole cohort at once — which themes it covers, which stakeholder areas '
+    + 'nobody has addressed, how well-evidenced the records are, and what a new entrant would need to bring. '
+    + 'Note what is absent, not who is ahead: there is no ranked list here, and there should never be.</p></div></div>';
+
+  const pct = sim.total ? Math.round(sim.sourced/sim.total*100) : 0;
+
+  $("viewBody").innerHTML =
+    '<div class="filterbar"><span class="lbl">Domain</span>'
+    + CATEGORIES.filter(function(c){ return c !== "All"; }).map(function(c){
+        return '<button class="pill ' + (c === cat ? "blue" : "") + '" data-simcat="' + esc(c) + '">' + esc(c) + '</button>';
+      }).join("") + '</div>'
+    + (sim.rows.length === 0
+        ? '<div class="empty">No ventures recorded under ' + esc(cat) + '. That absence is itself a portfolio finding.</div>'
+        : '<div class="cells side"><div class="cell" style="padding:0">'
+            + '<div class="panel" style="border:0"><div class="panel-head"><h3>' + esc(cat) + ' cohort</h3>'
+            + '<span class="meta">' + sim.rows.length + ' venture(s)</span></div><div class="panel-body">'
+            + sim.rows.map(function(r){
+                return '<div class="crit"><div><div class="cl">' + esc(r.s.name) + '</div>'
+                  + '<div class="cd">' + esc(r.s.mission) + '</div>'
+                  + '<div class="chips" style="margin-top:7px">' + r.p.sdg.map(function(t){
+                      return '<span class="chip sdg">' + esc(t.label) + '</span>'; }).join("") + '</div></div>'
+                  + '<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">'
+                  + pill(r.p.tier.label,r.p.tier.id === "scale" ? "blue" : r.p.tier.id === "pilot" ? "lime" : "")
+                  + (r.p.gated ? pill("risk gate","coral") : "") + '</div></div>';
+              }).join("")
+            + '</div></div>'
+            + '<div class="panel" style="border:0;border-top:var(--rule)"><div class="panel-head"><h3>Theme coverage</h3></div>'
+            + '<div class="panel-body">' + (Object.keys(sim.themes).length
+                ? Object.keys(sim.themes).map(function(k){
+                    return '<div class="crit"><div><div class="cl" style="font-size:12px">' + esc(k) + '</div>'
+                      + '<div class="cd">' + esc(sim.themes[k].join(", ")) + '</div></div>'
+                      + pill(sim.themes[k].length + " / " + sim.rows.length,"") + '</div>';
+                  }).join("")
+                : '<p class="note">Nothing tagged in this cohort.</p>') + '</div></div>'
+          + '</div><div class="cell" style="padding:0">'
+            + '<div class="panel" style="border:0"><div class="panel-head"><h3>Evidence quality</h3></div><div class="panel-body">'
+              + '<dl class="kv"><dt>Ventures</dt><dd>' + sim.rows.length + '</dd>'
+              + '<dt>Confirmed fields</dt><dd>' + sim.sourced + ' of ' + sim.total + '</dd>'
+              + '<dt>Tier spread</dt><dd>' + Object.keys(sim.tiers).filter(function(k){ return sim.tiers[k]; })
+                  .map(function(k){ return TIERS[k].label + " " + sim.tiers[k]; }).join(" · ") + '</dd></dl>'
+              + '<div class="meter"><span style="width:' + pct + '%"></span></div>'
+              + '<p class="note" style="margin-top:7px">' + pct + '% of fields confirmed by a human against a real source.</p>'
+            + '</div></div>'
+            + '<div class="panel" style="border:0;border-top:var(--rule)"><div class="panel-head"><h3>Stakeholder coverage</h3></div>'
+            + '<div class="panel-body">' + sim.stake.map(function(a){
+                return '<div class="crit"><div><div class="cl" style="font-size:12px">' + esc(a.label) + '</div>'
+                  + '<div class="cw">' + esc(a.hint) + '</div></div>'
+                  + pill(a.count + " / " + a.of, a.count === 0 ? "coral" : a.count === a.of ? "lime" : "") + '</div>';
+              }).join("") + '</div></div>'
+            + '<div class="panel" style="border:0;border-top:var(--rule)"><div class="panel-head"><h3>What a new entrant would need</h3></div>'
+            + '<div class="panel-body"><p style="font-size:12.5px"><b>White space:</b> '
+              + esc(sim.white.join(", ") || "none — this cohort spans the reference themes") + '</p>'
+              + '<p class="note" style="margin-top:9px">' + (sim.tiers.scale
+                  ? "This cohort already contains a Scale-tier venture, so quantitative IRIS+-aligned reporting is a realistic expectation here."
+                  : "This cohort is pre-Scale. A new entrant should not be held to reporting it has no operating history for.") + '</p></div></div>'
+            + (sim.gaps.length ? '<div class="panel" style="border:0;border-top:var(--rule)"><div class="panel-head"><h3>Portfolio findings</h3></div>'
+                + '<div class="panel-body"><ul class="gaps">' + sim.gaps.map(function(g){
+                    return '<li>' + esc(g) + '</li>'; }).join("") + '</ul></div></div>' : "")
+          + '</div></div>');
+}
+
+/* ---- verifier lab ---- */
+function viewVerifier(){
+  const s = byId("ackerlicht"), v = verifyOf(s);
+  $("viewHead").innerHTML =
+    '<div class="view-head-row"><div><div class="sub">Stage 3 of the pipeline</div>'
+    + '<h1>Verifier lab</h1>'
+    + '<p class="desc">Claude drafts the report and cites specific facts. A separate deterministic matcher — no model involved — '
+    + 'compares each cited value against the source record. Two checks run independently: does the value match, and was that '
+    + 'record field ever confirmed by a human against a real source? A claim matching an unsourced field is '
+    + '<b>not</b> verified, and the ledger says so.</p></div>'
+    + '<div class="head-actions">'
+      + '<button class="pill blue" id="labRun">Run verifier →</button>'
+      + '<button class="pill ' + (state.seeded[s.id] ? "" : "coral") + '" data-seed="' + esc(s.id) + '"'
+        + (state.seeded[s.id] ? " disabled" : "") + '>Seed a claim</button>'
+      + '<button class="pill" id="labReset">Reset</button>'
+    + '</div></div>';
+
+  $("viewBody").innerHTML =
+    '<div class="lab"><div class="lab-col src">'
+      + '<div class="eyebrow">Drafted claims — ' + esc(s.name) + '</div>'
+      + claimsFor(s).map(function(c){
+          return '<div class="claim-line' + (c.seeded ? " seeded" : "") + '"><span class="t">"' + esc(c.statedValue) + '"</span>'
+            + (c.seeded ? pill("seeded","coral") : "") + '</div>';
+        }).join("")
+      + '<p class="note" style="margin-top:14px">The drafting model produced these. It does not get to decide whether they are true.</p>'
+    + '</div><div class="lab-col">'
+      + '<div class="eyebrow">Deterministic match result</div>'
+      + '<div id="labOut">' + (state.labRun ? "" : '<p class="note">Nothing run yet. Press <b>Run verifier</b>.</p>') + '</div>'
+    + '</div></div>'
+
+    + '<div class="cells c3" style="margin-top:16px">'
+      + '<div class="cell"><div class="eyebrow">Verdict · match</div><p style="font-size:12.5px">'
+        + 'The stated value equals the recorded value <b>and</b> a human confirmed that record field against a named source. '
+        + 'Only this counts as verified.</p></div>'
+      + '<div class="cell lime"><div class="eyebrow">Verdict · match, record unsourced</div><p style="font-size:12.5px">'
+        + 'The value matches what we hold, but nobody has confirmed what we hold. Reported honestly rather than passed off as verified.</p></div>'
+      + '<div class="cell" style="background:var(--coral)"><div class="eyebrow">Verdict · unverified</div><p style="font-size:12.5px">'
+        + 'Either the value contradicts the record, or the field does not exist in our source data at all. '
+        + 'The claim is pulled and a correction goes back to the model.</p></div>'
+    + '</div>';
+
+  if(state.labRun) paintLab(s,true);
+}
+
+/* The reveal is staggered with timers, so a repaint that lands mid-animation
+   would otherwise append a second set of rows on top of the first. Each paint
+   claims a generation; timers from a superseded paint no-op. */
+let labGen = 0;
+
+function paintLab(s,instant){
+  const gen = ++labGen;
+  const v = verifyOf(s), box = $("labOut");
+  if(!box) return;
+  box.innerHTML = "";
+  const reduce = instant || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  v.results.forEach(function(r,i){
+    window.setTimeout(function(){
+      if(gen !== labGen) return;
+      const d = document.createElement("div");
+      d.className = "result-line";
+      d.innerHTML = '<span class="t">"' + esc(r.statedValue) + '"</span>' + pill(V_SHORT[r.verdict],V_PILL[r.verdict]);
+      box.appendChild(d);
+      window.requestAnimationFrame(function(){ d.classList.add("show"); });
+    }, reduce ? 0 : i*340);
+  });
+
+  window.setTimeout(function(){
+    if(gen !== labGen) return;
+    const held = v.counts.flagged + v.counts.unsourced;
+    const n = document.createElement("p");
+    n.className = "note";
+    n.style.marginTop = "12px";
+    n.textContent = held
+      ? held + " of " + v.counts.total + " claims held back — " + v.counts.flagged
+        + " with no source match, " + v.counts.unsourced + " matching a field nobody has confirmed."
+      : "All claims matched a source-confirmed field.";
+    box.appendChild(n);
+    if(v.corrections.length){
+      const c = document.createElement("div");
+      c.className = "correction";
+      c.innerHTML = "<h4>Deterministic correction — sent back to Claude</h4><ul>"
+        + v.corrections.map(function(x){ return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+      box.appendChild(c);
+    }
+    if(state.seeded[s.id]){
+      const d = document.createElement("p");
+      d.className = "note";
+      d.style.marginTop = "10px";
+      d.innerHTML = "<b>Say this out loud:</b> the flagged claims were deliberately seeded so the catch is visible. "
+        + "It demonstrates the check — it is not a real finding.";
+      box.appendChild(d);
+    }
+  }, reduce ? 5 : v.results.length*340 + 120);
+}
+
+/* ---- intake wizard ---- */
+const STEP_LABELS = ["Mission","Theory of change","Stage","Profile"];
+const EXAMPLE = {
+  name:"Ackerlicht Robotics", category:"AgTech",
+  problem:"Smallholder vegetable farms depend on herbicide because mechanical weeding is not economic below 50 hectares, degrading soil life season after season.",
+  beneficiaries:"Family-run smallholder farms in Middle Franconia with no agronomist on retainer.",
+  activity:"A laser weeding robot makes on-field passes that replace chemical and manual weeding.",
+  evidence:"40 pilot hectares across 2 partner farms; one season of measurement, recurring each season.",
+  tier:"pilot"
+};
+
+function viewIntake(){
+  const d = state.intakeData, st = state.intakeStep;
+  $("viewHead").innerHTML =
+    '<div class="view-head-row"><div><div class="sub">Founder-facing</div><h1>Build an impact twin</h1>'
+    + '<p class="desc">Four fields and an honestly self-declared stage. The twin core parses what you write — '
+    + 'this is not a lookup into a canned profile. Theme tags, confidence labels, the risk gate and the readiness band '
+    + 'are all derived from your own words.</p></div>'
+    + '<div class="head-actions"><button class="pill" id="fillEx">Fill an example</button></div></div>';
+
+  if(st === 4 && state.intakeProfile){ return paintIntakeResult(); }
+
+  let form = "";
+  if(st === 1){
+    form = '<label class="fl">The problem<span class="h">What changes, and for whom?</span></label>'
+      + '<textarea id="f_problem" placeholder="Smallholder vegetable farms depend on herbicide because…">' + esc(d.problem||"") + '</textarea>'
+      + '<label class="fl">Who benefits<span class="h">Be specific. How underserved are they today?</span></label>'
+      + '<textarea id="f_beneficiaries" placeholder="Family-run smallholder farms in Middle Franconia…">' + esc(d.beneficiaries||"") + '</textarea>';
+  } else if(st === 2){
+    form = '<label class="fl">What you actually do<span class="h">The activity in the middle of your theory of change.</span></label>'
+      + '<textarea id="f_activity" placeholder="A laser weeding robot makes on-field passes that…">' + esc(d.activity||"") + '</textarea>'
+      + '<label class="fl">Evidence so far<span class="h">Blank is a legitimate answer at concept stage — it will be recorded as "no evidence yet", not held against you.</span></label>'
+      + '<textarea id="f_evidence" placeholder="40 pilot hectares across 2 partner farms…">' + esc(d.evidence||"") + '</textarea>'
+      + '<label class="fl">Venture name</label>'
+      + '<input type="text" id="f_name" placeholder="Ackerlicht Robotics" value="' + esc(d.name||"") + '">';
+  } else if(st === 3){
+    form = '<label class="fl">Stage<span class="h">An honesty control. Declaring a stage above your evidence is the first thing the tool catches.</span></label>'
+      + '<div class="tier-opts">' + Object.keys(TIERS).map(function(k){
+          return '<button class="tier-opt" data-tier="' + k + '" aria-pressed="' + (d.tier === k) + '">'
+            + esc(TIERS[k].label) + '<span class="h">' + esc(TIERS[k].bar) + '</span></button>';
+        }).join("") + '</div>';
+  }
+
+  $("viewBody").innerHTML =
+    '<div class="wizard">'
+    + '<div class="steps">' + STEP_LABELS.map(function(l,i){
+        const n = i+1;
+        return '<div class="step ' + (n < st ? "done" : n === st ? "now" : "") + '">' + n + ' · ' + esc(l) + '</div>';
+      }).join("") + '</div>'
+    + '<div class="panel"><div class="panel-body">' + form
+      + '<div class="wiz-actions">'
+      + (st > 1 ? '<button class="pill" id="wizBack">← Back</button>' : '<span></span>')
+      + (st < 3 ? '<button class="pill blue" id="wizNext">Next →</button>'
+                : '<button class="pill coral" id="wizGo">Generate impact twin →</button>')
+      + '</div></div></div></div>';
+}
+
+function captureIntake(){
+  const g = function(id){ const e = $(id); return e ? e.value : undefined; };
+  ["problem","beneficiaries","activity","evidence","name"].forEach(function(k){
+    const v = g("f_" + k);
+    if(v !== undefined) state.intakeData[k] = v;
+  });
+}
+
+function paintIntakeResult(){
+  const p = state.intakeProfile;
+  const rd = assessReadiness(p,{});
+  $("viewBody").innerHTML =
+    '<div class="wizard" style="max-width:none">'
+    + '<div class="steps">' + STEP_LABELS.map(function(l,i){
+        return '<div class="step ' + (i+1 < 4 ? "done" : "now") + '">' + (i+1) + ' · ' + esc(l) + '</div>';
+      }).join("") + '</div>'
+    + '<div class="cells side"><div class="cell">'
+      + '<div class="eyebrow">Evidence by dimension</div>' + radar(p)
+    + '</div><div class="cell">'
+      + '<h2 style="font-size:22px">' + esc(p.name) + '</h2>'
+      + '<div class="chips" style="margin-top:10px">'
+        + '<span class="chip" style="background:' + (p.tier.id === "scale" ? "var(--blue);color:#fff" : p.tier.id === "pilot" ? "var(--lime)" : "var(--white)") + '">'
+        + esc(p.tier.label) + '</span>'
+        + p.sdg.map(function(t){ return '<span class="chip sdg">' + esc(t.label) + '</span>'; }).join("")
+        + p.iris.map(function(t){ return '<span class="chip iris">' + esc(t.label) + '</span>'; }).join("")
+        + (p.gated ? '<span class="chip" style="background:var(--coral)">Flagged for review</span>' : "")
+      + '</div>'
+      + '<p class="note" style="margin-top:12px"><b>Evidence bar:</b> ' + esc(p.tier.bar) + '</p>'
+      + '<div class="band ' + rd.band.id + '" style="margin-top:14px"><h4>' + esc(rd.band.label) + '</h4>'
+      + '<p>' + esc(rd.band.detail) + '</p></div>'
+    + '</div></div>'
+    + '<div class="panel" style="margin-top:16px"><div class="panel-head"><h3>Five dimensions</h3>'
+      + '<span class="meta">derived from your own words</span></div><div class="panel-body">'
+      + p.dims.map(function(dd){
+          return '<div class="dim-row"><div class="dl">' + esc(dd.label) + '</div>'
+            + '<div class="dm"><div class="dtext">' + esc(dd.narrative) + '</div>'
+            + (dd.gated ? '<div class="flag-callout">⚑ Flagged for human review</div>' : "")
+            + ((dd.notes && dd.notes.length) ? '<ul class="dnotes">' + dd.notes.map(function(n){
+                return '<li>' + esc(n) + '</li>'; }).join("") + '</ul>' : "")
+            + '</div><div class="dr">' + (dd.gated ? pill("not scored","coral")
+                : pill(CONF_LABEL[dd.confidence],CONF_PILL[dd.confidence])) + '</div></div>';
+        }).join("") + '</div></div>'
+    + '<div class="panel"><div class="panel-head"><h3>Theory of change</h3></div><div class="panel-body">'
+      + '<div class="toc-chain">' + p.toc.map(function(n){
+          return '<div class="toc-node' + (n.text ? "" : " empty") + '"><div class="stage">' + esc(n.stage) + '</div>'
+            + '<div class="txt">' + esc(n.text || "not stated — legitimate at this tier") + '</div>'
+            + '<div class="chips" style="margin-top:8px">' + n.sdg.map(function(t){
+                return '<span class="chip sdg">SDG ' + esc(t.target) + '</span>'; }).join("") + '</div>'
+            + (n.needsSharpening ? '<div class="sharp">⚠ Needs sharpening</div>' : "") + '</div>';
+        }).join("") + '</div></div></div>'
+    + '<div class="wiz-actions"><button class="pill" id="wizRestart">← Start over</button>'
+      + '<button class="pill blue" data-nav="portfolio">Back to portfolio →</button></div>'
+    + '</div>';
+}
+
+/* ==========================================================================
+   COMMAND PALETTE
+   ========================================================================== */
+
+function cmdkOpen(){
+  $("cmdk").classList.add("open");
+  $("cmdkInput").value = "";
+  state.cmdkIndex = 0;
+  cmdkFilter("");
+  $("cmdkInput").focus();
+}
+function cmdkClose(){ $("cmdk").classList.remove("open"); }
+
+function cmdkFilter(q){
+  q = q.toLowerCase().trim();
+  const all = [];
+  RAIL.forEach(function(g){ g.items.forEach(function(it){
+    all.push({kind:"view",label:it.label,view:it.view});
+  }); });
+  STARTUPS.forEach(function(s){
+    all.push({kind:"twin",label:s.name,view:"twin",id:s.id,extra:s.sector});
+  });
+  state.cmdkItems = all.filter(function(it){
+    return !q || it.label.toLowerCase().indexOf(q) !== -1 || (it.extra||"").toLowerCase().indexOf(q) !== -1;
+  });
+  if(state.cmdkIndex >= state.cmdkItems.length) state.cmdkIndex = 0;
+  $("cmdkList").innerHTML = state.cmdkItems.length
+    ? state.cmdkItems.map(function(it,i){
+        return '<button class="cmdk-item" data-cmdk="' + i + '" aria-selected="' + (i === state.cmdkIndex) + '">'
+          + '<span class="k">' + esc(it.kind) + '</span><span>' + esc(it.label)
+          + (it.extra ? ' <span style="opacity:.6">· ' + esc(it.extra) + '</span>' : "") + '</span></button>';
+      }).join("")
+    : '<div class="cmdk-empty">Nothing matches that.</div>';
+}
+function cmdkGo(i){
+  const it = state.cmdkItems[i];
+  if(!it) return;
+  cmdkClose();
+  navigate(it.view,it.id);
+}
+
+/* ==========================================================================
+   ROUTER + EVENTS
+   ========================================================================== */
+
+function navigate(view,id){
+  state.route = {view:view,id:id||null};
+  if(view === "twin") state.tab = "dimensions";
+  const hash = view === "twin" ? "#/twin/" + id : "#/" + view;
+  if(location.hash !== hash) location.hash = hash;
+  else render();
+}
+
+function readHash(){
+  const parts = location.hash.replace(/^#\/?/,"").split("/").filter(Boolean);
+  if(parts.length === 0) return {view:"portfolio",id:null};
+  if(parts[0] === "twin" && parts[1]) return {view:"twin",id:parts[1]};
+  const known = ["portfolio","simulate","verifier","intake"];
+  return {view:known.indexOf(parts[0]) !== -1 ? parts[0] : "portfolio",id:null};
+}
+
+function render(){
+  renderRail();
+  const v = state.route.view;
+  if(v === "twin") viewTwin(state.route.id);
+  else if(v === "simulate") viewSimulate();
+  else if(v === "verifier") viewVerifier();
+  else if(v === "intake") viewIntake();
+  else viewPortfolio();
+  const body = $("viewBody");
+  if(body) body.scrollTop = 0;
+}
+
+window.addEventListener("hashchange",function(){
+  const next = readHash();
+  /* Landing on a different twin resets to the first tab, matching what the
+     rail does. Tab clicks and in-place actions re-render without touching the
+     hash, so they keep the tab the user is on. */
+  if(next.view !== state.route.view || next.id !== state.route.id) state.tab = "dimensions";
+  state.route = next;
+  render();
+});
+
+document.addEventListener("click",function(e){
+  const t = e.target;
+
+  const nav = t.closest("[data-nav]");
+  if(nav){ navigate(nav.getAttribute("data-nav"),nav.getAttribute("data-id")); return; }
+
+  const tab = t.closest("[data-tab]");
+  if(tab){ state.tab = tab.getAttribute("data-tab"); render(); return; }
+
+  const cat = t.closest("[data-cat]");
+  if(cat){ state.cat = cat.getAttribute("data-cat"); render(); return; }
+
+  const sc = t.closest("[data-simcat]");
+  if(sc){ state.simCat = sc.getAttribute("data-simcat"); render(); return; }
+
+  const seed = t.closest("[data-seed]");
+  if(seed){
+    const id = seed.getAttribute("data-seed");
+    state.seeded[id] = true;
+    toast("Claim seeded","Two unbacked claims were injected into the draft. Run the verifier to catch them.");
+    render();
+    if(state.route.view === "verifier" && state.labRun) paintLab(byId(id));
+    return;
+  }
+  const unseed = t.closest("[data-unseed]");
+  if(unseed){
+    delete state.seeded[unseed.getAttribute("data-unseed")];
+    toast("Seeded claims removed","The draft is back to what the model actually produced.");
+    render();
+    return;
+  }
+
+  const reeval = t.closest("[data-reeval]");
+  if(reeval){
+    const id = reeval.getAttribute("data-reeval");
+    const d = new Date();
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    state.reEvaluated[id] = String(d.getDate()).padStart(2,"0") + " " + months[d.getMonth()] + " " + d.getFullYear();
+    toast("Twin core re-run","Profile recomputed from the current narrative. Tier and confidence labels re-derived.");
+    render();
+    return;
+  }
+
+  const clear = t.closest("[data-clear]");
+  if(clear){
+    state.reviewStatus[clear.getAttribute("data-clear")] = "cleared";
+    toast("Marked reviewed","A human signed off. This is a gate, not a score — the profile itself did not change.");
+    render();
+    return;
+  }
+  const reopen = t.closest("[data-reopen]");
+  if(reopen){
+    delete state.reviewStatus[reopen.getAttribute("data-reopen")];
+    render();
+    return;
+  }
+
+  const tier = t.closest("[data-tier]");
+  if(tier){ state.intakeData.tier = tier.getAttribute("data-tier"); render(); return; }
+
+  if(t.closest("#wizNext")){ captureIntake(); state.intakeStep++; render(); return; }
+  if(t.closest("#wizBack")){ captureIntake(); state.intakeStep--; render(); return; }
+  if(t.closest("#wizRestart")){
+    state.intakeStep = 1; state.intakeProfile = null; state.intakeData = {tier:"concept"}; render(); return;
+  }
+  if(t.closest("#fillEx")){
+    state.intakeData = Object.assign({},EXAMPLE);
+    state.intakeStep = 1;
+    toast("Example loaded","Walk the three steps — the profile at the end is computed from this text.");
+    render();
+    return;
+  }
+  if(t.closest("#wizGo")){
+    captureIntake();
+    state.intakeStep = 4;
+    $("viewBody").innerHTML = '<div class="loading"><div class="spin"></div>'
+      + '<div class="disp" style="font-size:14px">Building your impact twin…</div>'
+      + '<p class="note" style="margin-top:8px">Parsing narrative into theory-of-change nodes · tagging five dimensions · checking risk triggers</p></div>';
+    fetchProfile(state.intakeData).then(function(api){
+      state.intakeProfile = apiToProfile(api, state.intakeData);
+      render();
+      toast("Twin built", state.intakeProfile.gated
+        ? "A risk pattern was flagged for a mentor by the twin core — not scored."
+        : "Profile computed by the twin core (claude-opus-4-8). No composite score was produced.");
+    }).catch(function(err){
+      state.intakeProfile = buildProfile(state.intakeData);
+      render();
+      toast("Local engine used", (err && err.message ? err.message + " " : "")
+        + "Fell back to the on-device heuristic twin.");
+    });
+    return;
+  }
+
+  if(t.closest("#labRun")){
+    state.labRun = true;
+    paintLab(byId("ackerlicht"));
+    return;
+  }
+  if(t.closest("#labReset")){
+    state.labRun = false;
+    delete state.seeded["ackerlicht"];
+    render();
+    return;
+  }
+
+  if(t.closest("#backInternal")){ state.render = "internal"; syncRenderBtns(); render(); return; }
+  if(t.closest("#brandBtn")){ navigate("portfolio"); return; }
+  if(t.closest("#cmdkBtn")){ cmdkOpen(); return; }
+
+  const ci = t.closest("[data-cmdk]");
+  if(ci){ cmdkGo(parseInt(ci.getAttribute("data-cmdk"),10)); return; }
+  if(t === $("cmdk")){ cmdkClose(); return; }
+
+  const vi = t.closest("#vInternal"), vp = t.closest("#vPublic");
+  if(vi || vp){
+    state.render = vi ? "internal" : "public";
+    syncRenderBtns();
+    render();
+    toast(state.render === "public" ? "Public render" : "Internal render",
+      state.render === "public"
+        ? "Narrative, theme tags and a maturity badge only. No number that ranks one venture against another."
+        : "Full profile restored — dimensions, ledger, readiness and the review gate.");
+  }
+});
+
+function syncRenderBtns(){
+  $("vInternal").setAttribute("aria-pressed",String(state.render === "internal"));
+  $("vPublic").setAttribute("aria-pressed",String(state.render === "public"));
+}
+
+$("cmdkInput").addEventListener("input",function(e){ state.cmdkIndex = 0; cmdkFilter(e.target.value); });
+
+document.addEventListener("keydown",function(e){
+  if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k"){ e.preventDefault(); cmdkOpen(); return; }
+  if(!$("cmdk").classList.contains("open")){
+    if(e.key === "/" && document.activeElement === document.body){ e.preventDefault(); cmdkOpen(); }
+    return;
+  }
+  if(e.key === "Escape"){ cmdkClose(); return; }
+  if(e.key === "ArrowDown"){ e.preventDefault(); state.cmdkIndex = Math.min(state.cmdkIndex+1,state.cmdkItems.length-1); cmdkFilter($("cmdkInput").value); return; }
+  if(e.key === "ArrowUp"){ e.preventDefault(); state.cmdkIndex = Math.max(state.cmdkIndex-1,0); cmdkFilter($("cmdkInput").value); return; }
+  if(e.key === "Enter"){ e.preventDefault(); cmdkGo(state.cmdkIndex); }
+});
+
+/* Hovering a radar axis label highlights its dimension row. */
+document.addEventListener("mouseover",function(e){
+  const row = e.target.closest("[data-dim]");
+  if(row) row.classList.add("hot");
+});
+document.addEventListener("mouseout",function(e){
+  const row = e.target.closest("[data-dim]");
+  if(row) row.classList.remove("hot");
+});
+
+state.route = readHash();
+render();
+</script>
